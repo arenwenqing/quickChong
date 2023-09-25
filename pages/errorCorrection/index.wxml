@@ -1,0 +1,52 @@
+<!--pages/errorCorrection/index.wxml-->
+<view class="device-page-wrapper">
+  <view class="device-excharge-type-wrapper">
+    <view class="excharge-type-title">纠正设备信息</view>
+    <view class="excharge-type-data-wrapper">
+      <view
+        wx:for="{{quickData}}"
+        wx:key="index"
+        class="{{ item.selected ? 'excharge-type-item excharge-type-item-select' : 'excharge-type-item'}}"
+        data-index="{{item.id}}" 
+        data-name="{{item.name}}"
+        catchtap="choiceType"
+      >
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="device-excharge-content device-desicribtion">
+    <van-cell-group custom-class='cell-group-content' border="{{false}}">
+      <van-cell title-class='cell-title-style' title="添加描述" border="{{false}}" />
+      <van-field
+        type="textarea"
+        placeholder="请对要纠错的信息内容进行简要描述，如需要对位置进行纠正，还请详细描写设备周边特征，有助于信息判断"
+        autosize="{{ true }}"
+        :autosize="{ maxHeight: 100, minHeight: 50 }"
+        border="{{ false }}"
+        input-class="text-area-style"
+        model:value="{{ comment }}"
+      />
+    </van-cell-group>
+  </view>
+  <view class="device-excharge-content device-desicribtion-img">
+    <van-cell-group border="{{ false }}">
+      <van-cell title="设备照片（选填）" label="请上传真实、清晰的设备照片，有助于审核" border="{{ false }}" />
+    </van-cell-group>
+    <van-uploader
+      file-list="{{ fileList }}"
+      bind:delete="imageDelete"
+      accept="image"
+      multiple="true"
+      max-count="6"
+      max-size="{{5242880}}"
+      use-before-read
+      bind:before-read="beforeRead"
+      bind:after-read="afterRead"
+    />
+  </view>
+  <view class="device-bottom-submit-wrapper">
+    <view class="submit-btn">提交</view>
+  </view>
+  <van-toast id="van-toast" />
+</view>

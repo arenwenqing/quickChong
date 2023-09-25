@@ -1,0 +1,119 @@
+<page-meta>
+  <navigation-bar
+    title="评价详情"
+    front-color="#000000"
+    background-color="#fff"
+    color-animation-duration="500"
+    color-animation-timing-func="easeIn"
+  />
+  <scroll-view
+    bindscrolltolower="scrollToLower"
+    scroll-y="true"
+    style="height: 100vh;"
+    enhanced="{{true}}"
+  >
+    <van-search
+      value="{{value}}"
+      placeholder="请输入"
+      use-action-slot
+      shape="round"
+      clearable="{{false}}"
+      custom-class="comment-search-wrapper"
+      input-class="comment-search-input-style"
+    >
+    </van-search>
+    <view class="{{commentData.length === index + 1 ? 'comment-item comment-item-last' : 'comment-item'}}" wx:for="{{commentData}}" wx:key="index">
+      <view class="comment-item-left">
+        <image src="{{item.avatar}}" class="comment-portrait" />
+      </view>
+      <view class="comment-item-right">
+        <view class="comment-item-user">
+          <text class="comment-item-user-name">{{item.username}}</text>
+          <text class="comment-item-user-time">{{item.update_time}}</text>
+        </view>
+        <van-rate
+          value="{{item.star_level}}"
+          size="{{ 14 }}"
+          color="#ffd21e"
+          void-icon="star"
+          void-color="#eee"
+          readonly
+        />
+        <view class="comment-item-content">
+          {{item.comment}}
+        </view>
+        <view class="comment-item-image-wrapper">
+          <image src="{{item.pic_url}}" wx:for="{{item.pictures}}" wx:key="index" class="comment-item-imgage" />
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{!commentData.length}}">
+      <van-empty description="暂无评价" />
+    </view>
+  </scroll-view>
+  <view class="comment-btn">
+    <view class="comment-btn-content" catchtap="submitComment">
+      <text>写评价</text>
+    </view>
+  </view>
+  <van-popup
+    show="{{ show }}"
+    round
+    position="bottom"
+    closeable
+    custom-style="height: 68%"
+    bind:close="closeCommentPopup"
+    custom-class='comment-popup-wrapper'
+  >
+    <view class="popup-title">评价</view>
+    <view class="comment-rate-wrapper">
+      <van-rate
+        value="{{star_level}}"
+        size="{{ 28 }}"
+        color="#ffd21e"
+        void-icon="star"
+        void-color="#eee"
+        bind:change="starLevel"
+        custom-class='popup-rate-wrapper'
+      />
+    </view>
+    <view class="popup-pingjia-wrapper">
+      <view
+        wx:for="{{messageItemData}}"
+        wx:key="index"
+        class="{{ item.selected ? 'popup-pingjia-item popup-pingjia-item-choice' : 'popup-pingjia-item' }}"
+        data-index="{{item.id}}"
+        catchtap="choiceHandle"
+      >
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+    <view class="popup-pingjia-content">
+      <van-field
+        type="textarea"
+        placeholder="赶快评价吧"
+        autosize="{{ true }}"
+        :autosize="{ maxHeight: 100, minHeight: 50 }"
+        border="{{ false }}"
+        input-class="text-area-style"
+        custom-class='content-textarea'
+        model:value="{{ comment }}"
+      />
+      <van-uploader
+        file-list="{{ fileList }}"
+        bind:delete="imageDelete"
+        accept="image"
+        multiple="true"
+        max-count="6"
+        max-size="{{5242880}}"
+        use-before-read
+        bind:before-read="beforeRead"
+        bind:after-read="afterRead"
+      />
+    </view>
+    <view class="popup-submit-btn" catchtap="commentSubmit">
+      <text>提交</text>
+    </view>
+  </van-popup>
+  <van-toast id="van-toast" />
+</page-meta>

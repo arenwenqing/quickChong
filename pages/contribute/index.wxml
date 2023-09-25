@@ -1,0 +1,15 @@
+<!--pages/contribute/index.wxml-->
+<page-meta>
+  <view class="contribute-item">
+    <view class="contribute-title">一. 规则是什么</view>
+    <view class="contribute-content">
+      请对要纠错的信息内容进行简要描述，如需要请对要纠错的信息内容进行简要描述，如需要请对要纠错的信息内容进行简要描述，如需要
+    </view>
+  </view>
+  <view class="contribute-item">
+    <view class="contribute-title">二. 规则是什么</view>
+    <view class="contribute-content">
+      请对要纠错的信息内容进行简要描述，如需要请对要纠错的信息内容进行简要描述，如需要请对要纠错的信息内容进行简要描述，如需要
+    </view>
+  </view>
+</page-meta>

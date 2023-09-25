@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "设备纠错",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#0D7AC2",
+  "usingComponents": {
+    "van-cell-group": "@vant/weapp/cell-group/index",
+    "van-field": "@vant/weapp/field/index",
+    "van-cell": "@vant/weapp/cell/index",
+    "van-uploader": "@vant/weapp/uploader/index"
+  }
+}

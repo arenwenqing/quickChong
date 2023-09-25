@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#0D7AC2",
+  "usingComponents": {
+    "van-nav-bar": "@vant/weapp/nav-bar/index",
+    "van-search": "@vant/weapp/search/index"
+  }
+}

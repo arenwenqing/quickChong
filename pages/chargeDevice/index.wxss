@@ -1,0 +1,83 @@
+/* pages/chargeDevice/index.wxss */
+.charge-page-wrapper {
+  background-color: #eee;
+  width: 100vw;
+  height: 100vh;
+  color: #333;
+  overflow: auto;
+}
+.charge-device-wrapper {
+  background-color: #fff;
+  height: 200rpx;
+}
+.charge-device-top-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100vw;
+  margin-top: 5rpx;
+}
+.dropdown-menu-wrapper {
+  width: 180rpx;
+}
+.van-dropdown-menu {
+  box-shadow: none !important;
+}
+.search-btn-position {
+  margin-left: 20rpx;
+}
+.van-search__content {
+  width: 400rpx;
+}
+.current-postion-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 20rpx;
+}
+.position-message {
+  font-size: 22rpx;
+}
+.vicinity-text-style {
+  font-size: 24rpx;
+  color: rgba(69, 90, 100, 0.8);
+  margin: 20rpx 0 20rpx 40rpx;
+}
+.charge-vicinity-item {
+  background-color: #fff;
+  border-radius: 20rpx;
+  width: 86vw;
+  height: 240rpx;
+  font-size: 25rpx;
+  margin: 0 auto;
+  padding: 20rpx 30rpx 15rpx 30rpx;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+.vicinity-item-top {
+  display: flex;
+  align-items: center;
+  justify-content:space-between
+}
+.charge-name {
+  font-weight: bolder;
+  font-size: 30rpx;
+}
+.charge-address-detail {
+  margin: 20rpx 0;
+  font-size: 24rpx;
+}
+.charge-item-comment {
+  margin-left: 40rpx;
+  margin-bottom: 30rpx;
+}
+.charge-message-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.charge-tag-style {
+  margin-right: 10rpx;
+}
+.charge-vicinity-item:last-child {
+  margin-bottom: 100rpx;
+}

@@ -1,0 +1,172 @@
+<!--pages/addDevice/index.wxml-->
+<view class="device-page-wrapper">
+  <view class="device-excharge-type-wrapper">
+    <view class="excharge-type-title">充电设备类型</view>
+    <view class="excharge-type-data-wrapper">
+      <view
+        wx:for="{{deviceData}}"
+        wx:key="index"
+        class="{{ choiceDeviceValue === index ? 'excharge-type-item excharge-type-item-select' : 'excharge-type-item'}}"
+        data-index="{{index}}" 
+        data-name="{{item.name}}"
+        catchtap="choiceDeviceType"
+      >
+        <image src="{{choiceDeviceValue === index ? item.selectIcon : item.icon}}" class="excharge-type-icon" />
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="device-excharge-content">
+    <van-cell-group custom-class='cell-group-content' border="{{false}}">
+      <van-field
+        clearable
+        label="充电设备位置"
+        icon="location-o"
+        placeholder="输入搜索位置"
+        input-align="right"
+        bind:click-icon="onClickIcon"
+        bind:focus='addressFocus'
+        model:value="{{ devicePosition }}"
+      />
+      <van-field
+        clearable
+        label="详细地址"
+        placeholder="请输入"
+        input-align="right"
+        model:value="{{ address }}"
+      />
+      <van-field
+        clearable
+        label="邮箱"
+        placeholder="请输入"
+        input-align="right"
+        model:value="{{ email }}"
+      />
+      <van-field
+        clearable
+        label="设备品牌"
+        placeholder="请输入"
+        input-align="right"
+        model:value="{{ brand }}"
+      />
+      <van-field
+        clearable
+        label="设备编码"
+        placeholder="请输入"
+        input-align="right"
+        model:value="{{ device_code }}"
+      />
+      <van-field
+        clearable
+        label="品牌联系方式"
+        placeholder="请输入"
+        input-align="right"
+        model:value="{{ brand_contact }}"
+      />
+      <van-field
+        clearable
+        label="设备周围监控"
+        placeholder="请输入个数"
+        input-align="right"
+        type="number"
+        model:value="{{ around_monitor }}"
+      />
+    </van-cell-group>
+  </view>
+  <view class="device-excharge-content device-exhcarge-content">
+    <van-cell-group custom-class='cell-group-content' border="{{false}}">
+      <van-cell title-class='cell-title-style' title="支持扫码充电">
+        <van-switch size="{{'20px'}}" checked="{{deveiceData.is_scancode}}" bind:change="scanCode" />
+      </van-cell>
+      <van-cell title-class='cell-title-style' title="有防雨措施" >
+        <van-switch size="{{'20px'}}" checked="{{deveiceData.is_rainshelter}}" bind:change="rainshelter" />
+      </van-cell>
+      <van-cell title-class='cell-title-style' title="是否要自带充电器">
+        <van-switch checked="{{true}}" size="{{'20px'}}" checked="{{deveiceData.is_charger}}" bind:change="auoCharger" />
+      </van-cell>
+      <van-cell title-class='cell-title-style' title="类型" border="{{false}}" />
+      <view class="device-type-wrapper">
+        <view
+          wx:for="{{deviceTypeData}}"
+          wx:key="index"
+          data-index="{{index}}"
+          class="{{ typeValue === index ? 'device-type-item device-type-item-selected' : 'device-type-item'}}"
+          catchtap="choiceType"
+        >
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+      <van-cell title-class='cell-title-style' title="充电端口数量" border="{{false}}">
+        <van-stepper min="1" value="{{ deveiceData.device_port }}" integer bind:change="devicePortHandle" />
+      </van-cell>
+    </van-cell-group>
+  </view>
+  <view class="device-excharge-content device-desicribtion">
+    <van-cell-group custom-class='cell-group-content' border="{{false}}">
+      <van-cell title-class='cell-title-style' title="添加描述" border="{{false}}" />
+      <van-field
+        type="textarea"
+        placeholder="请对要添加的设备信息进行简要描述，详细描写周边的特征，有助于帮助用户准备查找"
+        autosize="{{ true }}"
+        :autosize="{ maxHeight: 100, minHeight: 50 }"
+        border="{{ false }}"
+        input-class="text-area-style"
+        model:value="{{ deveiceData.description }}"
+      />
+    </van-cell-group>
+  </view>
+  <view class="device-excharge-content device-desicribtion-img">
+    <van-cell-group border="{{ false }}">
+      <van-cell title="设备照片（选填）" label="请上传真实、清晰的设备照片，有助于审核" border="{{ false }}" />
+    </van-cell-group>
+    <van-uploader
+      file-list="{{ fileList }}"
+      bind:delete="imageDelete"
+      accept="image"
+      multiple="true"
+      max-count="6"
+      bind:after-read="afterRead"
+    />
+  </view>
+  <view class="device-bottom-submit-wrapper">
+    <view class="submit-btn" catchtap="addDeviceHandle">提交</view>
+  </view>
+  <van-popup
+    show="{{ addressShow }}"
+    round
+    position="bottom"
+    custom-style="height: 90%;"
+    bind:close="onClose"
+  >
+  <scroll-view
+    bindscrolltolower="scrollToLower"
+    scroll-y="true"
+    style="height: 100%;"
+    enhanced="{{true}}"
+  >
+    <view>
+      <van-search
+      value="{{ addressValue }}"
+      label="地址"
+      focus="{{true}}"
+      placeholder="请输入搜索关键词"
+      use-action-slot
+      bind:search="searchPosition"
+      bind:change="addSearchInputChange"
+      custom-class='add-device-addAddress'
+      field-class='address-input-style'
+    >
+      <view slot="action" bind:tap="clickSearch">搜索</view>
+      </van-search>
+      <view wx:for="{{addressListData}}" wx:key="index" class="address-list-wrapper" data-data="{{item}}" catchtap="choiceAddress">
+        <view class="address-title">
+          <van-icon name="location-o" />
+          <text class="address-title-content">{{item.title}}</text>
+        </view>
+        <view class="address-detail">{{item.address}}</view>
+      </view>
+      <van-loading wx:if="{{addressLoading}}" custom-class='address-loading' />
+    </view>
+  </scroll-view>
+  </van-popup>
+</view>

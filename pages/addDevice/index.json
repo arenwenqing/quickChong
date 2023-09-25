@@ -1,0 +1,17 @@
+{
+  "navigationBarBackgroundColor": "#fff",
+  "navigationBarTitleText": "添加设备",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "van-cell-group": "@vant/weapp/cell-group/index",
+    "van-field": "@vant/weapp/field/index",
+    "van-cell": "@vant/weapp/cell/index",
+    "van-switch": "@vant/weapp/switch/index",
+    "van-stepper": "@vant/weapp/stepper/index",
+    "van-uploader": "@vant/weapp/uploader/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-search": "@vant/weapp/search/index",
+    "van-loading": "@vant/weapp/loading/index"
+  }
+}

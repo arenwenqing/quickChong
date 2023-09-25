@@ -1,0 +1,124 @@
+<view class="page-body">
+  <van-nav-bar left-text="北京" custom-class='test-style' fixed="true">
+    <van-icon name="search" slot="left" />
+  </van-nav-bar>
+  <view class="page-section page-section-gap">
+    <map
+      id="myMap"
+      style="width: 100%; height: 100vh;"
+      latitude="{{latitude}}"
+      longitude="{{longitude}}"
+      show-location="{{true}}"
+      markers="{{markers}}"
+      polyline="{{polyline}}"
+      bindmarkertap="markertap"
+      show-location
+    >
+    </map>
+  </view>
+  <view id='moreAction' class="{{ showMoreType ? 'index-search-wrapper' : 'index-search-wrapper index-search-limit' }}">
+    <view class="home-top-search-wrapper">
+      <van-search
+        value="{{value}}"
+        placeholder="请输入位置"
+        use-action-slot
+        shape="round"
+        catchtap="toSearch"
+        clearable="{{false}}"
+        input-class="search-input-style"
+      >
+      </van-search>
+      <image src="/image/home-search-icon.png" class="search-icon" catchtap="showChargeType" />
+    </view>
+    <view class="charge-item-wrapper">
+      <view 
+        wx:for="{{chargeBtnArray}}"
+        wx:key="index"
+        class="{{ choiceTypeValue === item.id ? 'charge-item charge-item-selected' : 'charge-item' }}"
+        data-index="{{item.id}}"
+        catchtap="choiceType"
+      >
+        <image src="{{ choiceTypeValue === item.id ? item.selectIcon : item.icon}}" class="charge-img" wx:if="{{index !== 0}}" />
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="add-excharge-device-wrapper">
+    <view class="add-device-wrapper" catchtap="addDeviceHandle">
+      <image class="device-icon" src="/image/dian-dong-icon.png" />
+      <text>添加充电设备</text>
+    </view>
+    <view class="position-current-wrapper" catchtap="goBackCurrentPosition">
+      <image class="position-current-icon" src="/image/position-icon.png" />
+    </view>
+  </view>
+  <view class="{{ markCheckedShow ? 'checked-mark-wrapper' : 'checked-mark-wrapper hide'}}">
+    <image src="/image/close.png" class="checked-mark-close" catchtap="closeMarkDetail" />
+    <view class="mark-content-top">
+      <view class="content-img">
+        <image src="{{deviceDetail.pic_cover}}" class="content-img-style" />
+      </view>
+      <view>
+        <text class="checked-content-title">{{deviceDetail.device_type}}</text>
+        <view class="checked-content-detail">
+          <text>{{deviceDetail.distance}}</text>
+          <text class="checked-content-address">{{deviceDetail.address}}</text>
+        </view>
+        <view class="checked-pinlun-wrapper">
+          <van-rate
+            value="{{deviceDetail.star_level || 3}}"
+            size="{{ 20 }}"
+            color="#ffd21e"
+            void-icon="star"
+            void-color="#eee"
+            readonly
+          />
+          <text class="checked-content-pinlun" catchtap="lookCommentDetail" data-id="{{deviceDetail.id}}">{{deviceDetail.comment_number}}条评论</text>
+        </view>
+      </view>
+    </view>
+    <view class="mark-content-bottom">
+      <view class="checked-content-bottom">
+        <view class="checked-content-bg">
+          <image src="/image/home-checked-juxing.png" />
+          <text class="checked-content-type-text">{{ deviceDetail.loc_type === 1 ? '小区' : '公用'}}</text>
+        </view>
+        <text class="type-chatou-num">插头：{{deviceDetail.device_port}}个</text>
+      </view>
+      <text class="jiu-cuo-style" catchtap="goErrorCorrection">去纠错？</text>
+      <view class="checked-content-go-wrapper" catchtap="goPosition">
+        <image src="/image/home-checked-jiantou.png" class="go-btn-text-icon" />
+        <text>去这里</text>
+      </view>
+    </view>
+  </view>
+  <!-- <view class="charge-electricity-wrapper">
+    <view class="charge-choice-wrapper">
+      <text>请选择电动自行车充电类型</text>
+      <view class="charge-choice-type" >
+        <van-button
+          wx:for="{{chargeBtnArray}}"
+          bind:click="choiceType"
+          wx:key="index"
+          plain
+          type="{{ choiceTypeValue === item.id ? 'primary' : 'default'}}"
+          data-index="{{item.id}}"
+        >{{item.name}}</van-button>
+      </view>
+    </view>
+    <van-button type="primary" bind:click="skipChargePage" custom-class="look-btn-style"  size="normal">查看附近充电设备</van-button>
+  </view> -->
+  <!-- <van-popup
+    show="{{ show }}"
+    position="bottom"
+    custom-style="height: 30%;"
+    round
+    bind:close="onClose"
+  /> -->
+  <!-- <view class="btn-area">
+    <button bindtap="getCenterLocation" class="page-body-button" type="primary">获取位置</button>
+    <button bindtap="moveToLocation" class="page-body-button" type="primary">移动位置</button> 
+    <button bindtap="translateMarker" class="page-body-button" type="primary">移动标注</button>
+    <button bindtap="includePoints" class="page-body-button" type="primary">缩放视野展示所有经纬度</button>
+  </view> -->
+</view>

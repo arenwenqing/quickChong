@@ -1,0 +1,54 @@
+<!--pages/chargeDevice/index.wxml-->
+<page-meta>
+  <navigation-bar
+    title="充电设备选择"
+    front-color="#000000"
+    background-color="#ffffff"
+  />
+</page-meta>
+<view class="charge-page-wrapper">
+  <view class="charge-device-wrapper">
+    <view class="charge-device-top-wrapper">
+      <van-dropdown-menu  active-color="#07c160" custom-class="dropdown-menu-wrapper">
+        <van-dropdown-item value="{{ value1 }}" options="{{ option1 }}" />
+      </van-dropdown-menu>
+      <van-search
+        value="{{value}}"
+        placeholder="请输入位置"
+        use-action-slot
+        bind:change="onChange"
+        bind:search="onSearch"
+        clearable="{{false}}"
+      >
+        <view slot="action" bind:tap="searchValue" class="search-btn-position">搜索</view>
+      </van-search>
+    </view>
+    <view class="current-postion-wrapper">
+      <view class="position-message">
+        <text>当前定位：</text>
+        <text>北京市朝阳区崔各庄镇马泉营三区28号</text>
+      </view>
+      <van-button type='primary' size="small">重新定位</van-button>
+    </view>
+  </view>
+  <view class="vicinity-text-style">附近充电设备</view>
+  <view class="charge-vicinity-item" wx:for="{{chargeDeviceData}}" wx:key="index">
+    <view class="vicinity-item-top">
+      <text class="charge-name">充电桩</text>
+      <text>1km</text>
+    </view>
+    <view class="charge-address-detail">北京市朝阳区望京绿地中心A座路口东400米</view>
+    <view>
+      <van-rate value="{{ 3 }}" color="#07c160" readonly="{{true}}" />
+      <text class="charge-item-comment">90条评论</text>
+    </view>
+    <view class="charge-message-detail">
+      <view>
+        <van-tag round type="success" custom-class="charge-tag-style">小区</van-tag>
+        <van-tag round type="success" custom-class="charge-tag-style">插头：10个</van-tag>
+      </view>
+      <van-button type='primary' size='small' bind:click="goCharge">前往</van-button>
+    </view>
+  </view>
+</view>
+

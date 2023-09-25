@@ -1,0 +1,18 @@
+/* pages/contribute/index.wxss */
+.contribute-item {
+  margin-bottom: 80rpx;
+}
+.contribute-title {
+  font-size: 32rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0,0,0,0.6);
+  margin: 32rpx 0 41rpx 28rpx;
+}
+.contribute-content {
+  font-size: 30rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0,0,0,0.6);
+  margin: 0 28rpx;
+}

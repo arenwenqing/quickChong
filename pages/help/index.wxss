@@ -1,0 +1,39 @@
+/* pages/help/index.wxss */
+.my-help-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 300rpx;
+  background: #0D7AC2;
+  border-radius: 0 0 60rpx 60rpx;
+}
+.bangzhujiqiren {
+  width: 174rpx;
+  height: 179rpx;
+  margin-right: 56rpx;
+  margin-top: -80rpx;
+}
+.hepl-top-first {
+  font-size: 42rpx;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 18rpx;
+  margin-left: 39rpx;
+  margin-top: -80rpx;
+}
+.hepl-top-two {
+  font-size: 26rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(255,255,255,0.9);
+  margin-left: 39rpx;
+}
+.help-content {
+  min-height: 800rpx;
+  width: 720rpx;
+  background: #FFFFFF;
+  border-radius: 30rpx 30rpx 0 0;
+  margin: -80rpx auto 0;
+  padding-top: 40rpx;
+}

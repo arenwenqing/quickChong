@@ -1,0 +1,130 @@
+/* pages/cooperate/index.wxss */
+/* pages/addDevice/index.wxss */
+.device-page-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background: #F4F4F4;
+  overflow-y: auto;
+}
+.device-excharge-type-wrapper {
+  width: 714rpx;
+  height: 204rpx;
+  background: #FFFFFF;
+  border-radius: 18rpx;
+  margin: 18rpx auto 14rpx;
+}
+.excharge-type-title {
+  font-size: 28rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0,0,0,0.6);
+  padding: 34rpx 0 30rpx 28rpx;
+}
+.excharge-type-data-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 0 28rpx 34rpx 28rpx;
+}
+.excharge-type-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 206rpx;
+  height: 68rpx;
+  background: #F7F8FA;
+  border-radius: 34rpx;
+  font-size: 28rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0,0,0,0.8);
+}
+.excharge-type-icon {
+  display: inline-block;
+  height: 30rpx;
+  width: 30rpx;
+  margin-right: 5rpx;
+}
+.excharge-type-item-select {
+  background: #0D7AC2;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+.device-excharge-content {
+  width: 714rpx;
+  height: 440rpx;
+  background: #FFFFFF;
+  border-radius: 18rpx;
+  margin: 0rpx auto 14rpx;
+}
+.cell-group-content {
+  padding: 38rpx 0rpx;
+}
+.device-input-style {
+  height: 100rpx;
+}
+.cell-title-style {
+  color: var(--field-label-color,#646566);
+}
+.device-exhcarge-content {
+  height: 670rpx;
+}
+.device-type-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 80rpx;
+}
+.device-type-item {
+  width: 300rpx;
+  height: 68rpx;
+  background: #F7F8FA;
+  border-radius: 34rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0,0,0,0.8);
+}
+.device-type-item-selected {
+  background: #0D7AC2;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+.device-desicribtion {
+  height: 340rpx;
+}
+.text-area-style{
+  height: 100rpx !important;
+}
+.device-desicribtion-img {
+  height: 352rpx;
+  margin-bottom: 160rpx;
+}
+.van-uploader {
+  margin-left: 28rpx;
+}
+.device-bottom-submit-wrapper {
+  background: #fff;
+  height: 120rpx;
+  width: 100vw;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.submit-btn {
+  height: 80rpx;
+  width: 600rpx;
+  background: #0D7AC2;
+  border-radius: 34rpx;
+  font-size: 32rpx;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  line-height: 80rpx;
+  color: #FFFFFF;
+  text-align: center;
+}

@@ -1,0 +1,86 @@
+/* pages/my/index.wxss */
+.my-placeholder {
+  height: 80rpx;
+  background-color: #0D7AC2;
+}
+.my-content {
+  width: 750rpx;
+  min-height: 1000rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx 24rpx 0rpx 0rpx;
+  margin-top: -20rpx;
+  position: relative;
+}
+.my-user-portrait-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  left: 50%;
+  margin-left: -100rpx;
+  top: -50rpx;
+}
+.my-portrait {
+  display: inline-block;
+  width: 186rpx;
+  height: 186rpx;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.my-user-name {
+  font-size: 40rpx;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: rgba(0,0,0,0.9);
+  text-align: center;
+  padding-top: 158rpx;
+}
+.my-user-gongxian {
+  width: 214rpx;
+  height: 48rpx;
+  background: rgba(13, 122, 194, 0.04);
+  border-radius: 24rpx;
+  text-align: center;
+  margin: 20rpx auto;
+  line-height: 48rpx;
+  font-size: 26rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0,0,0,0.9);
+}
+.my-user-item-wrapper {
+  margin: 50rpx 38rpx;
+}
+.my-user-item {
+  position: relative;
+  display: flex;
+  height: 150rpx;
+  align-items: center;
+  justify-content: space-between;
+  color: #999;
+}
+.my-user-item::after {
+  position: absolute;
+  display: inline-block;
+  content: '';
+  height: 1rpx;
+  width: 680rpx;
+  background-color: #eee;
+  bottom: 10rpx;
+}
+.my-item-left {
+  font-size: 30rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(0,0,0,0.7);
+}
+.my-item-img {
+  width: 50rpx;
+  height: 50rpx;
+  margin-right: 20rpx;
+  vertical-align: middle;
+}

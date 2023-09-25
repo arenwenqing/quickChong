@@ -1,0 +1,26 @@
+<!--pages/help/index.wxml-->
+<page-meta>
+  <view class="my-help-top">
+    <view>
+      <view class="hepl-top-first">欢迎来到帮助中心！</view>
+      <view class="hepl-top-two">大家都在问以下问题，快来看看吧～</view>
+    </view>
+    <image src="/image/bangzhujiqiren.png" class="bangzhujiqiren" />
+  </view>
+  <view class="help-content">
+    <van-collapse accordion value="{{ activeName }}" bind:change="onChange" border="{{false}}">
+      <van-collapse-item title="充电桩、充电柜、换电柜区别" name="1" border="{{false}}" size="large">
+        代码是写出来给人看的，附带能在机器上运行
+      </van-collapse-item>
+      <van-collapse-item title="如何发现充电设备" name="2" border="{{false}}" size="large">
+        代码是写出来给人看的，附带能在机器上运行
+      </van-collapse-item>
+      <van-collapse-item title="贡献值能用来做什么" name="3" border="{{false}}" size="large">
+        代码是写出来给人看的，附带能在机器上运行
+      </van-collapse-item>
+      <van-collapse-item title="联系客服" name="4" border="{{false}}" size="large">
+        代码是写出来给人看的，附带能在机器上运行
+      </van-collapse-item>
+    </van-collapse>
+  </view>
+</page-meta>

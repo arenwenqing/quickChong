@@ -1,0 +1,49 @@
+<view class="device-page-wrapper">
+  <view class="device-excharge-content device-desicribtion">
+    <van-cell-group custom-class='cell-group-content' border="{{false}}">
+      <van-cell title-class='cell-title-style' title="添加描述" border="{{false}}" />
+      <van-field
+        type="textarea"
+        placeholder="请问题描述尽量详细"
+        autosize="{{ true }}"
+        :autosize="{ maxHeight: 100, minHeight: 50 }"
+        border="{{ false }}"
+        input-class="text-area-style"
+        model:value="{{ comment }}"
+      />
+    </van-cell-group>
+  </view>
+  <view class="device-excharge-content device-desicribtion-img">
+    <van-cell-group border="{{ false }}">
+      <van-cell title="设备照片（选填）" label="请上传真实、清晰的设备照片，有助于审核" border="{{ false }}" />
+    </van-cell-group>
+    <van-uploader
+      file-list="{{ fileList }}"
+      bind:delete="imageDelete"
+      accept="image"
+      multiple="true"
+      max-count="6"
+      max-size="{{5242880}}"
+      use-before-read
+      bind:before-read="beforeRead"
+      bind:after-read="afterRead"
+    />
+  </view>
+  <view class="device-bottom-submit-wrapper">
+    <view class="submit-btn" catchtap="submitFeedback">提交反馈</view>
+  </view>
+  <van-dialog
+    use-slot
+    title="提交成功"
+    show="{{ show }}"
+    theme="round-button"
+    confirm-button-color="#0D7AC2"
+    bind:close="onClose"
+    bind:confirm="confirm"
+  >
+    <image src="../../image/tijiao.png" class="feed-back-img" />
+    <view class="feed-back-success-text">您的反馈意见我们已经收到，感谢您的宝贵意见，我们会尽快优化</view>
+  </van-dialog>
+
+  <van-toast id="van-toast" />
+</view>

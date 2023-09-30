@@ -20,6 +20,7 @@
       clearable="{{false}}"
       custom-class="comment-search-wrapper"
       input-class="comment-search-input-style"
+      bind:search="searchHandle"
     >
     </van-search>
     <view class="{{commentData.length === index + 1 ? 'comment-item comment-item-last' : 'comment-item'}}" wx:for="{{commentData}}" wx:key="index">
@@ -39,11 +40,14 @@
           void-color="#eee"
           readonly
         />
+        <view class="comment-item-content-tag">
+          <van-tag type="primary" custom-class='tag-style' round plain wx:for="{{item.tag}}" wx:key="index">{{item}}</van-tag>
+        </view>
         <view class="comment-item-content">
           {{item.comment}}
         </view>
         <view class="comment-item-image-wrapper">
-          <image src="{{item.pic_url}}" wx:for="{{item.pictures}}" wx:key="index" class="comment-item-imgage" />
+          <image src="{{item.pic_url}}" catch:tap="showBig" data-url="{{item.pic_url}}"  wx:for="{{item.pictures}}" wx:key="index" class="comment-item-imgage" />
         </view>
       </view>
     </view>
@@ -116,4 +120,13 @@
     </view>
   </van-popup>
   <van-toast id="van-toast" />
+  <big-image 
+    show-big-image="{{showBigImage.flag}}"
+    url="{{showBigImage.url}}"
+    bind:closeMark="onCloseMark"
+  >
+  </big-image>
+  <view class="process-wrapper" wx:if="{{showProcess}}">
+    <van-circle value="{{ processValue }}"  text="{{processValue}}%" />
+  </view>
 </page-meta>

@@ -59,6 +59,8 @@ Page({
       picture: [], // 上传的图片
       device_type: null, // 充电设备类型
     },
+    showProcess: false,
+    processValue: 0
   },
 
   /**
@@ -152,7 +154,7 @@ Page({
   afterRead(event) {
     const { file } = event.detail;
     file.forEach(item => {
-      wx.uploadFile({
+      const uploadTask = wx.uploadFile({
         url: url + "/api/file/upload", // 服务端接收上传文件的路由
         filePath: item.url,
         name: 'file',
@@ -188,6 +190,18 @@ Page({
           });
         },
       });
+      uploadTask.onProgressUpdate((res) => {
+        this.setData({
+          showProcess: true,
+          processValue: res.progress
+        })
+        if (res.progress === 100) {
+          this.setData({
+            showProcess: false,
+            processValue: 0
+          })
+        }
+      })
     })
   },
 

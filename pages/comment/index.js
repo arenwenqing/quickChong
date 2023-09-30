@@ -44,7 +44,13 @@ Page({
     comment: '',
     picture: [],
     currentPage: 1,
-    ifLoadMore: true
+    ifLoadMore: true,
+    showBigImage: {
+      flag: false,
+      url: ''
+    },
+    showProcess: false,
+    processValue: 0
   },
 
   /**
@@ -56,8 +62,20 @@ Page({
     }, () => this.getCommentList())
   },
 
+  // 确定搜索
+  searchHandle(e) {
+    console.log(e.detail)
+    this.setData({
+      commentData: [],
+      currentPage: 1,
+      ifLoadMore: true
+    }, () => {
+      this.getCommentList(e.detail && e.detail.trim())
+    })
+  },
+
   // 获取评价
-  getCommentList() {
+  getCommentList(keywords = '') {
     wx.showLoading({
       title: '加载中...',
     })
@@ -67,12 +85,17 @@ Page({
       method: 'GET',
       data: {
         ticket: wx.getStorageSync('ticket'),
+        keywords,
         device_id: this.data.deviceId,
         page: this.data.currentPage
       },
       success: (res) => {
+        const tempArr = res.data.data.list || []
+        tempArr.forEach(item => {
+          item.tag = item.tag.split(',')
+        })
         this.setData({
-          commentData: this.data.commentData.concat(res.data.data.list),
+          commentData: this.data.commentData.concat(tempArr),
           currentPage: (res.data.data.page * 1) + 1,
           ifLoadMore: res.data.data.list.length === 10
         })
@@ -82,6 +105,26 @@ Page({
       },
       complete: () => {
         wx.hideLoading()
+      }
+    })
+  },
+
+  // 点击展示大图
+  showBig(e) {
+    this.setData({
+      showBigImage: {
+        flag: true,
+        url: e.currentTarget.dataset.url
+      }
+    })
+  },
+
+  // 关闭大图
+  onCloseMark() {
+    this.setData({
+      showBigImage: {
+        flag: false,
+        url: ''
       }
     })
   },
@@ -183,7 +226,7 @@ Page({
   afterRead(event) {
     const { file } = event.detail;
     file.forEach(item => {
-      wx.uploadFile({
+      const uploadTask = wx.uploadFile({
         url: url + "/api/file/upload", // 服务端接收上传文件的路由
         filePath: item.url,
         name: 'file',
@@ -216,6 +259,18 @@ Page({
           });
         },
       });
+      uploadTask.onProgressUpdate((res) => {
+        this.setData({
+          showProcess: true,
+          processValue: res.progress
+        })
+        if (res.progress === 100) {
+          this.setData({
+            showProcess: false,
+            processValue: 0
+          })
+        }
+      })
     })
   },
 

@@ -46,7 +46,10 @@
     />
   </view>
   <view class="device-bottom-submit-wrapper">
-    <view class="submit-btn">提交</view>
+    <view class="submit-btn" catchtap='errorCorrection'>提交</view>
   </view>
   <van-toast id="van-toast" />
+  <view class="process-wrapper" wx:if="{{showProcess}}">
+    <van-circle value="{{ processValue }}"  text="{{processValue}}%" />
+  </view>
 </view>

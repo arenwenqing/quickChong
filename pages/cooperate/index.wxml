@@ -21,24 +21,28 @@
         label="公司名称"
         placeholder="请输入"
         input-align="right"
+        model:value="{{ company_name }}"
       />
       <van-field
         clearable
         label="联系人"
         placeholder="请输入"
         input-align="right"
+        model:value="{{ contact }}"
       />
       <van-field
         clearable
         label="联系电话"
         placeholder="请输入"
         input-align="right"
+        model:value="{{ phone }}"
       />
       <van-field
         clearable
         label="邮箱"
         placeholder="请输入"
         input-align="right"
+        model:value="{{ email }}"
       />
     </van-cell-group>
   </view>
@@ -66,10 +70,11 @@
         :autosize="{ maxHeight: 100, minHeight: 50 }"
         border="{{ false }}"
         input-class="text-area-style"
+        model:value="{{ intro }}"
       />
     </van-cell-group>
   </view>
   <view class="device-bottom-submit-wrapper">
-    <view class="submit-btn">提交</view>
+    <view class="submit-btn" catch:tap="submitCooperate">提交</view>
   </view>
 </view>

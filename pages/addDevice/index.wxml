@@ -169,4 +169,7 @@
     </view>
   </scroll-view>
   </van-popup>
+  <view class="process-wrapper" wx:if="{{showProcess}}">
+    <van-circle value="{{ processValue }}"  text="{{processValue}}%" />
+  </view>
 </view>

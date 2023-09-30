@@ -26,14 +26,19 @@ Page({
     choiceData: [],
     comment: '',
     fileList: [],
-    picture: []
+    picture: [],
+    deviceId: 0,
+    showProcess: false,
+    processValue: 0
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
+    this.setData({
+      deviceId: options.id
+    })
   },
 
   choiceType: function (e) {
@@ -86,7 +91,7 @@ Page({
   afterRead(event) {
     const { file } = event.detail;
     file.forEach(item => {
-      wx.uploadFile({
+      const uploadTask = wx.uploadFile({
         url: url + "/api/file/upload", // 服务端接收上传文件的路由
         filePath: item.url,
         name: 'file',
@@ -119,6 +124,51 @@ Page({
           });
         },
       });
+      uploadTask.onProgressUpdate((res) => {
+        this.setData({
+          showProcess: true,
+          processValue: res.progress
+        })
+        if (res.progress === 100) {
+          this.setData({
+            showProcess: false,
+            processValue: 0
+          })
+        }
+      })
+    })
+  },
+
+  // 提交纠错
+  errorCorrection() {
+    const nameData = this.data.quickData.filter(item => this.data.choiceData.includes(item.id))
+    const tempName = nameData.map(item => item.name)
+    wx.request({
+      url: url + '/api/user/correct',
+      method: 'POST',
+      data: {
+        ticket: wx.getStorageSync('ticket'),
+        picture: this.data.picture,
+        description: this.data.comment,
+        error_type: tempName.join(','),
+        device_id: this.data.deviceId
+      },
+      success: (res) => {
+        if (!res.data.code) {
+          wx.showToast({
+            title: '提交成功',
+            icon: 'success',
+          })
+          setTimeout(() => {
+            wx.navigateBack({
+              delta: 1 // 返回上一级页面
+            })
+          }, 1000)
+        }
+      },
+      fail: (err) => {
+        console.error('纠错失败：', err)
+      }
     })
   },
 

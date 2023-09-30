@@ -44,6 +44,8 @@
     <image src="../../image/tijiao.png" class="feed-back-img" />
     <view class="feed-back-success-text">您的反馈意见我们已经收到，感谢您的宝贵意见，我们会尽快优化</view>
   </van-dialog>
-
+  <view class="process-wrapper" wx:if="{{showProcess}}">
+    <van-circle value="{{ processValue }}"  text="{{processValue}}%" />
+  </view>
   <van-toast id="van-toast" />
 </view>

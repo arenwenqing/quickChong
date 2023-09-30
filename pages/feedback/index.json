@@ -7,6 +7,7 @@
     "van-field": "@vant/weapp/field/index",
     "van-cell": "@vant/weapp/cell/index",
     "van-uploader": "@vant/weapp/uploader/index",
-    "van-dialog": "@vant/weapp/dialog/index"
+    "van-dialog": "@vant/weapp/dialog/index",
+    "van-circle": "@vant/weapp/circle/index"
   }
 }

@@ -4,6 +4,9 @@
     "van-field": "@vant/weapp/field/index",
     "van-uploader": "@vant/weapp/uploader/index",
     "van-empty": "@vant/weapp/empty/index",
-    "van-toast": "@vant/weapp/toast/index"
+    "van-toast": "@vant/weapp/toast/index",
+    "big-image": "/pages/componets/bigImage/index",
+    "van-circle": "@vant/weapp/circle/index",
+    "van-tag": "@vant/weapp/tag/index"
   }
 }

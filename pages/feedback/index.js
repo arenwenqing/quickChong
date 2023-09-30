@@ -11,7 +11,9 @@ Page({
     ],
     picture: [],
     comment: '',
-    show: false
+    show: false,
+    showProcess: false,
+    processValue: 0
   },
 
   /**
@@ -56,7 +58,7 @@ Page({
   afterRead(event) {
     const { file } = event.detail;
     file.forEach(item => {
-      wx.uploadFile({
+      const uploadTask = wx.uploadFile({
         url: url + "/api/file/upload", // 服务端接收上传文件的路由
         filePath: item.url,
         name: 'file',
@@ -89,6 +91,18 @@ Page({
           });
         },
       });
+      uploadTask.onProgressUpdate((res) => {
+        this.setData({
+          showProcess: true,
+          processValue: res.progress
+        })
+        if (res.progress === 100) {
+          this.setData({
+            showProcess: false,
+            processValue: 0
+          })
+        }
+      })
     })
   },
 
@@ -132,7 +146,9 @@ Page({
 
   // 反馈确定
   confirm() {
-    wx.navigateTo(-1)
+    wx.navigateBack({
+      delta: 1 // 返回上一级页面
+    })
   },
 
   /**

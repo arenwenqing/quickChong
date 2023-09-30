@@ -1,0 +1,10 @@
+/* pages/componets/bigImage/index.wxss */
+.wrapper {
+  position: absolute;
+  width: 720rpx;
+  height: 900rpx;
+  top: 50%;
+  left: 50%;
+  margin-top: -450rpx;
+  margin-left: -360rpx;
+}

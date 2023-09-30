@@ -1,0 +1,14 @@
+<!--pages/componets/bigImage/index.wxml-->
+<view class="big-image-wrapper">
+  <van-overlay show="{{ showBigImage }}" bind:click="onClickHide" z-index="10000" >
+    <view class="wrapper">
+      <van-image
+        width="720rpx"
+        height="900rpx"
+        fit="contain"
+        src="{{ url }}"
+        image-class='big-image-style'
+      />
+    </view>
+  </van-overlay>
+</view>

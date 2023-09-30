@@ -32,17 +32,44 @@ Page({
     markCheckedShow: false,
     choiceTypeValue: 1,
     showMoreType: false,
-    latitude: 23.099994,
-    longitude: 113.324520,
+    latitude: 0,
+    longitude: 0,
     markers:[],
     polyline: [],
     show: false,
     currentMarkers: {},
-    deviceDetail: {}
+    deviceDetail: {},
+    showBigImage: {
+      flag: false,
+      url: ''
+    }
   },
   onReady: function (e) {
     this.mapCtx = wx.createMapContext('myMap')
   },
+
+  // 点击展示大图
+  showBig(e) {
+    wx.hideTabBar();
+    this.setData({
+      showBigImage: {
+        flag: true,
+        url: e.currentTarget.dataset.url
+      }
+    })
+  },
+
+  // 关闭大图
+  onCloseMark() {
+    this.setData({
+      showBigImage: {
+        flag: false,
+        url: ''
+      }
+    })
+    wx.showTabBar();
+  },
+
   onLoad: function (options) {
     // 先检查用户是否登录
     this.checkSessionHandle()
@@ -184,26 +211,14 @@ Page({
 
   getCenterLocation: function () {
     wx.getLocation({
-      type: 'wgs84',
+      type: 'gcj02',
       isHighAccuracy: true,
       highAccuracyExpireTime: 3500,
       success: (res) => {
         const latitude = res.latitude
         const longitude = res.longitude
         wx.setStorageSync('currentPosition', JSON.stringify({ latitude, longitude }))
-        this.setData({
-          currentMarkers: {
-            id: 100,
-            latitude: latitude,
-            longitude: longitude,
-            iconPath: '/image/start-icon.png',
-            name: '',
-            width: 50, // 标记点图标宽度
-            height: 55 // 标记点图标高度
-          }
-        }, () => {
-          this.getDeviceList('')
-        })
+        this.getDeviceList('')
         // 调用移动到用户位置的方法
         // this.mapCtx?.moveToLocation({
         //   latitude: latitude,
@@ -251,9 +266,10 @@ Page({
   },
 
   // 去纠错
-  goErrorCorrection() {
+  goErrorCorrection(e) {
+    const id = e.currentTarget.dataset.id
     wx.navigateTo({
-      url: '/pages/errorCorrection/index',
+      url: `/pages/errorCorrection/index?id=${id}`,
     })
   },
 
@@ -311,22 +327,21 @@ Page({
         const tempMarkers = data.map((item, index) => {
           const coordinate = item.coordinate.split(',')
           return {
-            id: item.id,
+            id: item.id * 1,
             latitude: coordinate[0] * 1,
             longitude: coordinate[1] * 1,
             iconPath: mapIcon[item.device_type],
-            name: item.device_type,
             width: 50, // 标记点图标宽度
             height: 55 // 标记点图标高度
           }
         })
         this.setData({
-          markers: tempMarkers.concat([this.data.currentMarkers])
+          markers: tempMarkers
         })
         // 调用移动到用户位置的方法
         this.mapCtx?.moveToLocation({
-          latitude: this.data.currentMarkers.latitude,
-          longitude: this.data.currentMarkers.longitude,
+          latitude: currentPosition.latitude,
+          longitude: currentPosition.longitude,
           success: function () {
             // 移动成功
           },
@@ -403,11 +418,11 @@ Page({
     })
   },
 
-  showChargeType() {
-    this.setData({
-      showMoreType: !this.data.showMoreType
-    })
-  },
+  // showChargeType() {
+  //   this.setData({
+  //     showMoreType: !this.data.showMoreType
+  //   })
+  // },
 
   // 城市选择
   showAddressChoice() {

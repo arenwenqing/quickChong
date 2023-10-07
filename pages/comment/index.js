@@ -1,6 +1,31 @@
 // pages/comment/index.js
 import { url } from '../../utils/util'
 import Toast from '@vant/weapp/toast/toast';
+const datas = [{
+  name: '位置好找',
+  id: 1,
+  selected: false
+}, {
+  name: '信息准确',
+  id: 2,
+  selected: false
+}, {
+  name: '设备使用方便',
+  id: 3,
+  selected: false
+},{
+  name: '有防雨措施',
+  id: 4,
+  selected: false
+}, {
+  name: '充电快',
+  id: 5,
+  selected: false
+}, {
+  name: '无乱停放',
+  id: 6,
+  selected: false
+}]
 Page({
 
   /**
@@ -12,31 +37,7 @@ Page({
     commentData: [],
     imageData: [1,1,2,3],
     show: false,
-    messageItemData: [{
-      name: '位置好找',
-      id: 1,
-      selected: false
-    }, {
-      name: '信息准确',
-      id: 2,
-      selected: false
-    }, {
-      name: '设备使用方便',
-      id: 3,
-      selected: false
-    },{
-      name: '有防雨措施',
-      id: 4,
-      selected: false
-    }, {
-      name: '充电快',
-      id: 5,
-      selected: false
-    }, {
-      name: '无乱停放',
-      id: 6,
-      selected: false
-    }],
+    messageItemData: datas,
     choiceData: [],
     deviceId: 0,
     star_level: 0,
@@ -60,6 +61,42 @@ Page({
     this.setData({
       deviceId: options.id
     }, () => this.getCommentList())
+  },
+
+  // 评分
+  rateChange(e) {
+    let tempData = [{
+      name: '位置不准',
+      id: 1,
+      selected: false
+    }, {
+      name: '设备信息缺失',
+      id: 2,
+      selected: false
+    }, {
+      name: '设备故障多',
+      id: 3,
+      selected: false
+    }, {
+      name: '无防雨棚',
+      id: 4,
+      selected: false
+    }, {
+      name: '充电慢功率低',
+      id: 5,
+      selected: false
+    }, {
+      name: '车辆乱停',
+      id: 6,
+      selected: false
+    }]
+    if (e.detail >= 3) {
+      tempData = datas
+    }
+    this.setData({
+      messageItemData: tempData,
+      star_level: e.detail
+    })
   },
 
   // 确定搜索
@@ -309,13 +346,6 @@ Page({
           icon: 'fail'
         })
       }
-    })
-  },
-
-  // 星级
-  starLevel(event) {
-    this.setData({
-      star_level: event.detail
     })
   },
 

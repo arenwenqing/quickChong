@@ -15,7 +15,25 @@ const formatNumber = n => {
 }
 const url = 'https://www.gathertrack.com'
 
+// 获取用户信息
+const getUserInfo = (cb) => {
+  const tempCurrentUserInfo = JSON.parse(wx.getStorageSync('userInfo') || '{}')
+  if (tempCurrentUserInfo.nickName) return
+  wx.getUserProfile({
+    desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+    success: (res) => {
+      wx.setStorageSync('userInfo', JSON.stringify(res.userInfo))
+      cb && cb(res)
+      // this.setData({
+      //   currentUserInfo: res.userInfo,
+      //   ifLogin: wx.getStorageSync('ticket') ? true : false
+      // })
+    }
+  })
+}
+
 module.exports = {
   formatTime,
-  url
+  url,
+  getUserInfo
 }

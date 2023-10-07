@@ -13,6 +13,10 @@
     "van-icon": "@vant/weapp/icon/index",
     "van-search": "@vant/weapp/search/index",
     "van-loading": "@vant/weapp/loading/index",
-    "van-circle": "@vant/weapp/circle/index"
+    "van-circle": "@vant/weapp/circle/index",
+    "van-toast": "@vant/weapp/toast/index",
+    "van-radio": "@vant/weapp/radio/index",
+    "van-radio-group": "@vant/weapp/radio-group/index",
+    "van-action-sheet": "@vant/weapp/action-sheet/index"
   }
 }

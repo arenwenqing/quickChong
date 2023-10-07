@@ -51,7 +51,7 @@
 }
 .device-excharge-content {
   width: 714rpx;
-  height: 660rpx;
+  height: 480rpx;
   background: #FFFFFF;
   border-radius: 18rpx;
   margin: 0rpx auto 14rpx;
@@ -170,4 +170,13 @@
   left: 0;
   align-items: center;
   justify-content: center;
+}
+.radio-custom {
+  margin-left: 20rpx;
+}
+.title-class {
+  color: var(--field-label-color,#646566);
+}
+.radio-text {
+  font-size: 25rpx;
 }

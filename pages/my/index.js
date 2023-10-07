@@ -7,13 +7,21 @@ Page({
    */
   data: {
     ifLogin: wx.getStorageSync('ticket') ? true : false,
-    userData: {}
+    userData: {},
+    avatarUrl: wx.getStorageSync('avatarUrl'),
+    nickName: wx.getStorageSync('nickName'),
+    showLogin: false
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    this.setData({
+      ifLogin: wx.getStorageSync('ticket') ? true : false,
+      avatarUrl: wx.getStorageSync('avatarUrl'),
+      nickName: wx.getStorageSync('nickName')
+    })
   },
 
   /**
@@ -27,6 +35,10 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
+    this.setData({
+      avatarUrl: wx.getStorageSync('avatarUrl'),
+      nickName: wx.getStorageSync('nickName')
+    })
     wx.request({
       url: url + '/api/user/profile',
       method: 'GET',
@@ -50,6 +62,26 @@ Page({
    */
   onHide() {
 
+  },
+
+  // 获取微信授权
+  getUserInfoHanle () {
+    if (!wx.getStorageSync('nickName')) {
+      this.setData({
+        showLogin: true
+      })
+    }
+  },
+
+  loginSureHandle(){
+    setTimeout(() => {
+      this.setData({
+        avatarUrl: wx.getStorageSync('avatarUrl'),
+        nickName: wx.getStorageSync('nickName'),
+        showLogin: false,
+        ifLogin: wx.getStorageSync('ticket') ? true : false
+      })
+    }, 500)
   },
 
   /**
@@ -82,16 +114,24 @@ Page({
 
   // 意见反馈
   feedback() {
-    wx.navigateTo({
-      url: '/pages/feedback/index',
-    })
+    if (!wx.getStorageSync('nickName')) {
+      this.getUserInfoHanle()
+    } else {
+      wx.navigateTo({
+        url: '/pages/feedback/index',
+      })
+    }
   },
 
   // 我要合作
   cooperateHandle() {
-    wx.navigateTo({
-      url: '/pages/cooperate/index',
-    })
+    if (!wx.getStorageSync('nickName')) {
+      this.getUserInfoHanle()
+    } else {
+      wx.navigateTo({
+        url: '/pages/cooperate/index',
+      })
+    }
   },
 
   contributeHandle() {

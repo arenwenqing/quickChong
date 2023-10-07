@@ -1,7 +1,5 @@
-<view class="page-body">
-  <van-nav-bar left-text="北京" custom-class='test-style' fixed="true">
-    <van-icon name="search" slot="left" />
-  </van-nav-bar>
+<view class="page-body" page-style="{{ showCity ? 'overflow: hidden;' : '' }}">
+  <navigation-bar bind:openRegular="openRegular" bind:selectAddress="selectAddress"></navigation-bar>
   <view class="page-section page-section-gap">
     <map
       id="myMap"
@@ -10,8 +8,11 @@
       longitude="{{longitude}}"
       show-location="{{true}}"
       markers="{{markers}}"
-      polyline="{{polyline}}"
+      polyline="{{polyline}}" 
+      joinCluster="{{true}}"
       bindmarkertap="markertap"
+      bindregionchange="regionchange"
+      scale="13"
       show-location
     >
     </map>
@@ -20,7 +21,7 @@
     <view class="home-top-search-wrapper">
       <van-search
         value="{{value}}"
-        placeholder="请输入位置"
+        placeholder="请输入想要查询的位置"
         use-action-slot
         shape="round"
         catchtap="toSearch"
@@ -46,7 +47,7 @@
   <view class="add-excharge-device-wrapper">
     <view class="add-device-wrapper" catchtap="addDeviceHandle">
       <image class="device-icon" src="/image/dian-dong-icon.png" />
-      <text>添加充电设备</text>
+      <text>发现充电设备</text>
     </view>
     <view class="position-current-wrapper" catchtap="goBackCurrentPosition">
       <image class="position-current-icon" src="/image/position-icon.png" />
@@ -60,20 +61,27 @@
       </view>
       <view>
         <text class="checked-content-title">{{deviceDetail.device_type}}</text>
+        <view class="checked-tag-wrapper">
+          <text class="tag-item" wx:if="{{deviceDetail.is_scancode}}">扫码充电</text>
+          <text class="tag-item" wx:if="{{deviceDetail.is_rainshelter}}">有防雨措施</text>
+          <text class="tag-item" wx:if="{{deviceDetail.is_charger}}">无需自充电器</text>
+          <text class="tag-item" wx:if="{{!deviceDetail.is_charger}}">需自充电器</text>
+        </view> 
         <view class="checked-content-detail">
           <text>{{deviceDetail.distance}}</text>
           <text class="checked-content-address">{{deviceDetail.address}}</text>
         </view>
         <view class="checked-pinlun-wrapper">
           <van-rate
-            value="{{deviceDetail.star_level || 3}}"
+            value="{{deviceDetail.star_level || 0}}"
             size="{{ 20 }}"
             color="#ffd21e"
             void-icon="star"
             void-color="#eee"
             readonly
           />
-          <text class="checked-content-pinlun" catchtap="lookCommentDetail" data-id="{{deviceDetail.id}}">{{deviceDetail.comment_number}}条评论</text>
+          <text class="checked-content-pinlun" catchtap="lookCommentDetail" data-id="{{deviceDetail.id}}">{{deviceDetail.comment_number}}条评论
+</text>
         </view>
       </view>
     </view>
@@ -98,4 +106,5 @@
     bind:closeMark="onCloseMark"
   >
   </big-image>
+  <get-nick show="{{showLogin}}" bind:loginSure="loginSureHandle"></get-nick>
 </view>

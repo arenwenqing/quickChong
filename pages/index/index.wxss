@@ -146,7 +146,7 @@
 .checked-mark-wrapper {
   position: fixed;
   width: 718rpx;
-  height: 302rpx;
+  height: 362rpx;
   background: #FFFFFF;
   box-shadow: 0rpx 1rpx 14rpx 0rpx rgba(21,47,111,0.2);
   border-radius: 34rpx;
@@ -156,13 +156,13 @@
   z-index: 22;
 }
 .mark-content-top {
-  margin: 34rpx;
+  margin: 34rpx 14rpx;
   display: flex;
   align-items: center;
 }
 .content-img {
-  width: 152rpx;
-  height: 151rpx;
+  width: 182rpx;
+  height: 181rpx;
   border-radius: 18rpx;
   overflow: hidden;
   margin-right: 18rpx;
@@ -196,7 +196,7 @@
   font-size: 24rpx;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: rgba(0,0,0,0.6);
+  color: #0D7AC2;
   margin-left: 10rpx;
 }
 .mark-content-bottom {
@@ -335,4 +335,9 @@
   color: #0D7AC2;
   font-size: 24rpx;
   margin-left: -120rpx;
+}
+.tag-item {
+  font-size: 24rpx;
+  color: rgba(0,0,0,0.6);
+  margin-right: 10rpx;
 }

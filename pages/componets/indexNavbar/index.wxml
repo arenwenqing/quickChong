@@ -1,0 +1,23 @@
+<!--pages/componets/indexNavbar/index.wxml-->
+<!-- 自定义顶部栏 -->
+<view class="nav-bar" style="height:{{navBarHeight}}px;">
+  <view class="search" style="height:{{menuHeight}}px; min-height:{{menuHeight}}px; line-height:{{menuHeight}}px; left:{{menuRight}}px; top:{{menuTop}}px;">
+    <view catch:tap="switchChangeAddress">
+      <image src="/image/address-index-icon.png" class="index-address-icon" />
+      <text>{{currentCity}}</text>
+      <image src="/image/index-title-icon.png" class="index-title-icon" />
+    </view>
+  </view>
+</view>
+<van-popup
+  show="{{ show }}"
+  bind:close="onClose"
+  round
+  position="bottom"
+  custom-style="height: 50%"
+>
+  <van-area area-list="{{ areaList }}" bind:confirm="confirm" columns-num="{{ 2 }}" title="城市选择" />
+</van-popup>
+<!-- 占位，高度与顶部栏一样 -->
+<view style="height:{{navBarHeight}}px;"></view>
+

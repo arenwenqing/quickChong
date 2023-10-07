@@ -1,5 +1,7 @@
 // pages/addDevice/index.js
 import { url } from '../../utils/util'
+import Toast from '@vant/weapp/toast/toast'
+const app = getApp()
 Page({
   /**
    * 页面的初始数据
@@ -29,6 +31,16 @@ Page({
       name: '小区内充电设备',
       value: 1
     }],
+    deviceMonitorData: [{
+      text: '单独配置监控措施',
+      value: '单独配置监控措施'
+    }, {
+      text: '周围建筑有监控',
+      value: '周围建筑有监控'
+    }, {
+      text: '无监控措施',
+      value: '无监控措施'
+    }],
     typeValue: -1,
     fileData: null,
     fileList: [
@@ -41,6 +53,7 @@ Page({
     ifLoadMore: false,
   
     devicePosition: null, // 充电位置的文字
+    name: null, // 设备的位置name导航用
     address: null, // 详细地址
     coordinate: null, // 坐标
     city: null, // 城市
@@ -48,7 +61,7 @@ Page({
     brand: null, // 品牌
     device_code: null, // 设备编码
     brand_contact: null, // 联系方式
-    around_monitor: null, // 监控个数
+    around_monitor: '请选择', // 监控
     deveiceData: {
       is_scancode: false, // 扫码充电
       is_rainshelter: false, // 是否有防雨棚
@@ -60,7 +73,40 @@ Page({
       device_type: null, // 充电设备类型
     },
     showProcess: false,
-    processValue: 0
+    processValue: 0,
+    focusFlag: false,
+    monitorShow: false,
+    actions: [{
+      name: '单独配置监控措施',
+      color: '#646566'
+    }, {
+      name: '周围建筑有监控',
+      color: '#646566'
+    }, {
+      name: '无监控措施',
+      color: '#646566'
+    }]
+  },
+
+  // 监控选择
+  showMonitor() {
+    this.setData({
+      monitorShow: true
+    })
+  },
+
+  // 关闭
+  onCloseAction() {
+    this.setData({
+      monitorShow: false
+    })
+  },
+
+  // action 选择
+  onSelect(event) {
+    this.setData({
+      around_monitor: event.detail.name
+    })
   },
 
   /**
@@ -162,11 +208,18 @@ Page({
           ticket: wx.getStorageSync("ticket"), // 其他额外的表单数据
         },
         success: (res) => {
+          const responseData = JSON.parse(res.data)
+          if (responseData.code !== 0) {
+            return wx.showToast({
+              title: responseData.msg,
+              icon: 'error'
+            })
+            
+          }
           wx.showToast({
             title: "上传成功",
             icon: "success",
           });
-          const responseData = JSON.parse(res.data)
           const arr = this.data.fileList.concat([
             {
               url: responseData.data.url,
@@ -205,8 +258,21 @@ Page({
     })
   },
 
+  // // 监控选择
+  // radioChange(e) {
+  //   this.setData({
+  //     around_monitor: e.detail
+  //   })
+  // },
+
   // 提交
   addDeviceHandle() {
+    if (!this.data.deveiceData.device_type || !this.data.name) {
+      return Toast('设备类型和设备位置不能为空')
+    }
+    if (this.data.deveiceData.picture.length < 3) {
+      return Toast('设备图片至少三张')
+    }
     wx.request({
       url: url + '/api/device/add',
       method: 'POST',
@@ -221,6 +287,7 @@ Page({
         device_code: this.data.device_code, // 设备编码
         brand_contact: this.data.brand_contact, // 联系方式
         around_monitor: this.data.around_monitor, // 监控个数
+        name: this.data.name, // 设备位置
         ticket: wx.getStorageSync('ticket')
       },
       success: (res) => {
@@ -253,14 +320,20 @@ Page({
   // 获取焦点
   addressFocus() {
     this.setData({
-      addressShow: true
+      addressShow: true,
     })
+    setTimeout(() => {
+      this.setData({
+        focusFlag: true,
+      })
+    }, 500)
   },
 
   // 关闭添加地址
   onClose() {
     this.setData({
-      addressShow: false
+      addressShow: false,
+      focusFlag: false
     })
   },
 
@@ -271,7 +344,8 @@ Page({
       addressShow: false,
       city: choiceObj.city,
       coordinate: `${choiceObj.location.lat},${choiceObj.location.lng}`,
-      devicePosition: choiceObj.address
+      devicePosition: choiceObj.title,
+      name: choiceObj.title
     })
   },
 
@@ -291,7 +365,13 @@ Page({
 
   //点击搜索
   clickSearch() {
-    this.searchPosition(this.data.addressValue)
+    this.setData({
+      addressListData: [],
+      ifLoadMore: true,
+      currentPageIndex: 1
+    }, () => {
+      this.searchPosition(this.data.addressValue)
+    })
   },
 
   // 搜索位置
@@ -306,9 +386,9 @@ Page({
       url: 'https://apis.map.qq.com/ws/place/v1/suggestion',
       method: 'GET',
       data: {
-        key: 'IFIBZ-54CWQ-NLX5T-4FLGB-5WFB3-KEBV2',
+        key: '2IQBZ-GCWLL-DSGPF-EJPAM-5HDEV-ILB4O',
         keyword: value,
-        region: '北京',
+        region: app.globalData.address,
         page_index: this.data.currentPageIndex,
         page_size: 20,
         location: `${currentPosion.latitude},${currentPosion.longitude}`

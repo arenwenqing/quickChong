@@ -1,0 +1,17 @@
+<!--pages/componets/getNickName/index.wxml-->
+<van-overlay show="{{ show }}" bind:click="onClickHide" custom-class="van-overlay-login" z-index="10000">
+  <view class="wrapper2">
+    <image src="/image/close.png" class="login-close-icon" catch:tap="close" />
+    <view class="login-title">登录</view>
+    <view class="avatar-placeholder"></view>
+      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar-style" src="{{avatarUrl}}"></image>
+        <image class="avatar-style-photo" src="/image/default-pic.png"></image>
+      </button>
+      <view class="mp-form-style">
+        <text class="nick-style">昵称：</text>
+        <input type="nickname" maxlength="10" bindblur="nickNameConfirmHandle"  bindnicknamereview="nickNameHandle" class="weui-input" placeholder="请输入昵称"/>
+      </view>
+      <van-button color="#0D7AC2" round block custom-class="login-suer-btn" catch:tap="loginConfirm">确定</van-button>
+  </view>
+</van-overlay>

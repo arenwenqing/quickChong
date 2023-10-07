@@ -1,0 +1,30 @@
+/* pages/componets/indexNavbar/index.wxss */
+.nav-bar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  color: #fff;
+  background: #0D7AC2;
+}
+.nav-bar .search {
+  width: 60%;
+  color: #fff;
+  font-size: 14px;
+  background: #0D7AC2;
+  position: absolute;
+  border-radius: 50px;
+  padding-left: 14px;
+}
+.index-address-icon {
+  width: 42rpx;
+  height: 42rpx;
+  vertical-align: middle;
+  margin-right: 5rpx;
+}
+.index-title-icon {
+  width: 14rpx;
+  height: 14rpx;
+  position: relative;
+  top: 6rpx;
+  left: 5rpx;
+}

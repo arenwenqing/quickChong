@@ -1,5 +1,6 @@
 // index.js
-import { url } from '../../utils/util'
+import { url, getUserInfo } from '../../utils/util'
+var QQMapWX = require('../../libs/qqmap-wx-jssdk.js')
 // 获取应用实例
 const app = getApp()
 Page({
@@ -42,7 +43,9 @@ Page({
     showBigImage: {
       flag: false,
       url: ''
-    }
+    },
+    showLogin: false,
+    showCity: false
   },
   onReady: function (e) {
     this.mapCtx = wx.createMapContext('myMap')
@@ -70,9 +73,23 @@ Page({
     wx.showTabBar();
   },
 
+  loginSureHandle(){
+    setTimeout(() => {
+      this.setData({
+        showLogin: false
+      })
+    }, 500)
+  },
+
   onLoad: function (options) {
-    // 先检查用户是否登录
-    this.checkSessionHandle()
+    // 检查ticket是否存在
+    if (wx.getStorageSync('ticket')) {
+      // 先检查用户是否登录
+      this.checkSessionHandle()
+    } else {
+      wx.clearStorageSync()
+      this.login()
+    }
   },
 
   // 申请获取位置的操作
@@ -81,7 +98,7 @@ Page({
     if (wx.getStorageSync('scope.userLocation') === false) {
       this.checkSetting()
     } else {
-      this.getCenterLocation()
+      this.getCurrentLocation()
     }
   },
 
@@ -94,7 +111,7 @@ Page({
           // 没有授权，弹出模态框
           this.showModal()
         } else {
-          this.getCenterLocation()
+          this.getCurrentLocation()
         }
       }
     })
@@ -131,7 +148,7 @@ Page({
         }
       },
       fail: (err) => {
-        console.log('登录失败！' + res.errMsg)
+        console.log('登录失败！' + err.errMsg)
       }
     })
   },
@@ -149,7 +166,7 @@ Page({
         rawData: param.rawData
       },
       success: (res) => {
-        wx.setStorageSync('ticket', res.data.data.ticket)
+        wx.setStorageSync('ticket', res.data.data?.ticket)
         this.appForLocation()
       },
       fail: (err) => {
@@ -184,7 +201,7 @@ Page({
         // 判断是否已经授权地理位置
         if (res.authSetting['scope.userLocation']) {
           // 已经授权，重新获取地理位置
-          this.getCenterLocation()
+          this.getCurrentLocation()
         } else {
           // 没有授权，弹出提示框
           this.showToast()
@@ -194,9 +211,9 @@ Page({
   },
 
   // 搜索
-  toSearch: () => {
+  toSearch() {
     wx.navigateTo({
-      url: '/pages/search/index',
+      url: `/pages/search/index?latitude=${this.data.latitude}&longitude=${this.data.longitude}`,
     })
   },
 
@@ -209,7 +226,10 @@ Page({
     })
   },
 
-  getCenterLocation: function () {
+  getCurrentLocation: function () {
+    wx.showLoading({
+      title: '加载中...',
+    })
     wx.getLocation({
       type: 'gcj02',
       isHighAccuracy: true,
@@ -218,36 +238,51 @@ Page({
         const latitude = res.latitude
         const longitude = res.longitude
         wx.setStorageSync('currentPosition', JSON.stringify({ latitude, longitude }))
-        this.getDeviceList('')
-        // 调用移动到用户位置的方法
-        // this.mapCtx?.moveToLocation({
-        //   latitude: latitude,
-        //   longitude: longitude,
-        //   success: function () {
-        //     // 移动成功
-        //   },
-        //   fail: function (error) {
-        //     // 移动失败，可以处理错误情况
-        //     console.error(error);
-        //   }
-        // });
+        this.setData({
+          latitude: latitude,
+          longitude: longitude
+        })
       },
       fail: (err) => {
         console.error(err)
         wx.setStorageSync('scope.userLocation', false)
+      },
+      complete: () => {
+        wx.hideLoading()
       }
     })
-    // this.mapCtx.getCenterLocation({
-    //   success: function(res){
-    //     console.log(res.longitude)
-    //     console.log(res.latitude)
-    //   }
-    // })
+  },
+
+  // 地图拖拽时更新地图的中心坐标
+  regionchange(e) {
+    // 地图视野变化时触发
+    if (e.type === 'end') {
+      // 用户停止拖动地图
+      // 创建 map 上下文对象
+      this.mapCtx = wx.createMapContext('myMap')
+      this.mapCtx.getCenterLocation({
+        success: (res) => {
+          // 设置当前的地图中心坐标为用户坐标
+          wx.setStorageSync('currentPosition', JSON.stringify({ latitude: res.latitude, longitude: res.longitude }))
+          // 根据当前的地图中心坐标，查看周围的设备
+          const obj = this.data.chargeBtnArray.find(item => item.id === this.data.choiceTypeValue)
+          this.getDeviceList(obj.value, res.latitude, res.longitude)
+        },
+        fail: (err) => {
+          console.error(err)
+        }
+      })
+    }
   },
 
   // 点击标记点
   markertap(event) {
-    const markerId = event.markerId; // 获取点击的标记点的 id
+    if (!wx.getStorageSync('nickName')) {
+      return this.setData({
+        showLogin: true
+      })
+    }
+    const markerId = event.markerId || event.detail.markerId; // 获取点击的标记点的 id
     const selectedMarker = this.data.markers.find(marker => marker.id === markerId);
     // 在这里可以根据 selectedMarker 执行需要的操作，比如显示信息窗口等
     console.log("点击了标记点：" + selectedMarker.id);
@@ -282,42 +317,61 @@ Page({
       choiceTypeValue: e.currentTarget.dataset.index
     }, () => {
       const obj = this.data.chargeBtnArray.find(item => item.id === e.currentTarget.dataset.index)
-      this.getDeviceList(obj.value)
+      const getCenter = JSON.parse(wx.getStorageSync('centerPosition') || '{}')
+      if (getCenter.longitude) {
+        this.getDeviceList(obj.value, getCenter.latitude, getCenter.longitude)
+      } else {
+        this.getDeviceList(obj.value)
+      }
     })
   },
 
   // 添加设备
   addDeviceHandle() {
-    wx.getSetting({
-      success: (res) => {
-        // 判断是否已经授权地理位置
-        if (!res.authSetting['scope.userLocation']) {
-          // 没有授权，弹出模态框
-          this.showModal()
-        } else {
-          wx.navigateTo({
-            url: `/pages/addDevice/index`,
-          })
+    const tempCurrentUserInfo = wx.getStorageSync('nickName')
+    if (tempCurrentUserInfo) {
+      wx.getSetting({
+        success: (res) => {
+          // 判断是否已经授权地理位置
+          if (!res.authSetting['scope.userLocation']) {
+            // 没有授权，弹出模态框
+            this.showModal()
+          } else {
+            wx.navigateTo({
+              url: `/pages/addDevice/index`,
+            })
+          }
         }
-      }
-    })
+      })
+    } else {
+      this.setData({
+        showLogin: true
+      })
+    }
   },
 
+  
+
   // 获取用户所在位置附近的设备列表
-  getDeviceList(type) {
+  getDeviceList(type, latitude2, longitude2) {
     const currentPosition = JSON.parse(wx.getStorageSync('currentPosition') || '{}')
+    const latitude = latitude2 || currentPosition.latitude
+    const longitude = longitude2 || currentPosition.longitude
     wx.request({
       url: url + '/api/device/nearbyList',
       method: 'GET',
       data: {
-        city: '北京市',
+        city: app.globalData.address,
         device_type: type,
-        coordinate: `${currentPosition.latitude},${currentPosition.longitude}`,
+        coordinate: `${latitude},${longitude}`,
         page: 1,
         size: 20,
         ticket: wx.getStorageSync('ticket')
       },
       success: (res) => {
+        if (res.data.code !== 0) {
+          return this.login()
+        }
         const data = res.data.data?.list || []
         const mapIcon = {
           '充电桩': '/image/chongdiangzhuang-map-icon.png',
@@ -338,18 +392,6 @@ Page({
         this.setData({
           markers: tempMarkers
         })
-        // 调用移动到用户位置的方法
-        this.mapCtx?.moveToLocation({
-          latitude: currentPosition.latitude,
-          longitude: currentPosition.longitude,
-          success: function () {
-            // 移动成功
-          },
-          fail: function (error) {
-            // 移动失败，可以处理错误情况
-            console.error(error);
-          }
-        });
       },
       fail: (err) => {
         console.error(err)
@@ -359,38 +401,79 @@ Page({
 
   // 获取设备详情
   getDeviceDetail(param) {
-    const currentPosion = JSON.parse(wx.getStorageSync('currentPosition') || '{}')
-    wx.request({
-      url: url + '/api/device/detail',
-      method: 'GET',
-      data: {
-        ticket: wx.getStorageSync('ticket'),
-        id: param.id,
-        coordinate: `${currentPosion.latitude},${currentPosion.longitude}`
-      },
+    wx.getLocation({
+      type: 'gcj02',
+      isHighAccuracy: true,
+      highAccuracyExpireTime: 3500,
       success: (res) => {
-        this.setData({
-          deviceDetail: res.data.data
+        const latitude = res.latitude
+        const longitude = res.longitude
+        wx.request({
+          url: url + '/api/device/detail',
+          method: 'GET',
+          data: {
+            ticket: wx.getStorageSync('ticket'),
+            id: param.id,
+            coordinate: `${latitude},${longitude}`
+          },
+          success: (res) => {
+            this.setData({
+              deviceDetail: res.data.data
+            })
+            // 开始路线规划
+            this.line(`${latitude},${longitude}`, `${res.data.data.coordinate}`)
+          },
+          fail: () => {
+            wx.showToast({
+              title: '获取设备出错',
+              icon: 'fail'
+            })
+          }
         })
       },
-      fail: () => {
-        wx.showToast({
-          title: '获取设备出错',
-          icon: 'fail'
-        })
+      fail: (err) => {
+        console.error(err)
       }
     })
   },
 
   onShow() {
     if (wx.getStorageSync('ticket')) {
-      this.getDeviceList('')
+      const obj = this.data.chargeBtnArray.find(item => item.id === this.data.choiceTypeValue)
+      this.getDeviceList(obj.value)
+
+      const options = JSON.parse(wx.getStorageSync('detailObj') || '{}')
+      if (!options.id) return
+      const markerId = options.id // 获取点击的标记点的 id
+      const selectedMarker = this.data.markers.find(marker => marker.id === markerId);
+      // 在这里可以根据 selectedMarker 执行需要的操作，比如显示信息窗口等
+      console.log("点击了标记点：" + selectedMarker.id);
+      this.setData({
+        markCheckedShow: true
+      }, () => {
+        this.getDeviceDetail(selectedMarker)
+      })
+      this.mapCtx.moveToLocation({
+        latitude: options.latitude * 1,
+        longitude: options.longitude * 1,
+        success: function () {
+          // 移动成功
+          wx.removeStorageSync('detailObj')
+        },
+        fail: function (error) {
+          // 移动失败，可以处理错误情况
+          console.error(error);
+        }
+      });
     }
   },
 
   // 回到当前位置
   goBackCurrentPosition() {
-    const currentPosion = JSON.parse(wx.getStorageSync('currentPosition') || {})
+    const currentPosion = {
+      latitude: this.data.latitude,
+      longitude: this.data.longitude
+    }
     if (!currentPosion.latitude) return
     this.mapCtx.moveToLocation({
       latitude: currentPosion.latitude,
@@ -418,12 +501,6 @@ Page({
     })
   },
 
-  // showChargeType() {
-  //   this.setData({
-  //     showMoreType: !this.data.showMoreType
-  //   })
-  // },
-
   // 城市选择
   showAddressChoice() {
     this.setData({
@@ -431,70 +508,16 @@ Page({
     })
   },
 
-  // 路线规划
+  // 调用第三方导航
   goPosition() {
+    const tempObj = this.data.deviceDetail
     wx.openLocation({
-      latitude: 39.920067,
-      longitude: 116.44352
+      latitude: tempObj.coordinate.split(',')[0] * 1, // 目的地纬度
+      longitude: tempObj.coordinate.split(',')[1] * 1, // 目的地经度
+      name: tempObj.name, // 目的地名称
+      address: tempObj.address, // 目的地地址
     })
     // const currentPosion = JSON.parse(wx.getStorageSync('currentPosition') || {})
-    // wx.request({
-    //   url: 'https://apis.map.qq.com/ws/direction/v1/ebicycling/',
-    //   method: 'GET',
-    //   data: {
-    //     key: 'IFIBZ-54CWQ-NLX5T-4FLGB-5WFB3-KEBV2',
-    //     from: `${currentPosion.latitude},${currentPosion.longitude}`,
-    //     to: `39.920067,116.44352`
-    //   },
-    //   success: (res) => {
-    //     console.log(res.data)
-    //     var result = res.data.result
-    //     var route = result.routes[0]
-    //     var coors = route.polyline, pl = [];
-    //     //坐标解压（返回的点串坐标，通过前向差分进行压缩）
-    //     var kr = 1000000;
-    //     for (var i = 2; i < coors.length; i++) {
-    //       coors[i] = Number(coors[i - 2]) + Number(coors[i]) / kr;
-    //     }
-    //     //将解压后的坐标放入点串数组pl中
-    //     for (var i = 0; i < coors.length; i += 2) {
-    //       pl.push({ latitude: coors[i], longitude: coors[i + 1] })
-    //     }
-    //     this.setData({
-    //       // 将路线的起点设置为地图中心点
-    //       latitude:pl[0].latitude,
-    //       longitude:pl[0].longitude,
-    //       // 绘制路线
-    //       polyline: [{
-    //         points: pl,
-    //         color: '#58c16c',
-    //         width: 6,
-    //         borderColor: '#2f693c',
-    //         borderWidth: 1
-    //       }],
-    //       markers: [{
-    //         id: 3,
-    //         latitude: pl[0].latitude,
-    //         longitude: pl[0].longitude,
-    //         iconPath: '/image/start-icon.png',
-    //         name: 'T.I.T 创意园',
-    //         width: 50, // 标记点图标宽度
-    //         height: 55 // 标记点图标高度
-    //       }, {
-    //         id: 4,
-    //         latitude: 39.920067,
-    //         longitude: 116.44352,
-    //         iconPath: '/image/end-icon.png',
-    //         name: '终点',
-    //         width: 50, // 标记点图标宽度
-    //         height: 55 // 标记点图标高度
-    //       }]
-    //     })
-    //   },
-    //   fail: (err) => {
-    //     console.error(err)
-    //   }
-    // })
   },
 
   // 关闭城市选择
@@ -502,33 +525,81 @@ Page({
     this.setData({
       show: false
     })
-  }
+  },
 
-  // translateMarker: function() {
-  //   this.mapCtx.translateMarker({
-  //     markerId: 1,
-  //     autoRotate: true,
-  //     duration: 1000,
-  //     destination: {
-  //       latitude:23.10229,
-  //       longitude:113.3345211,
-  //     },
-  //     animationEnd() {
-  //       console.log('animation end')
-  //     }
-  //   })
-  // },
-  // includePoints: function() {
-  //   this.mapCtx.includePoints({
-  //     padding: [10],
-  //     points: [{
-  //       latitude:23.10229,
-  //       longitude:113.3345211,
-  //     }, {
-  //       latitude:23.00229,
-  //       longitude:113.3345211,
-  //     }]
-  //   })
-  // }
+  // 路线规划
+  line(from, to) {
+    this.qqmapsdk = new QQMapWX({
+      key: '2IQBZ-GCWLL-DSGPF-EJPAM-5HDEV-ILB4O'
+    });
+
+    this.qqmapsdk.direction({
+      mode: 'bicycling',
+      from,
+      to,
+      accuracy: 2,
+      success: (res) => {
+        console.log(res.data)
+        var result = res.result
+        var route = result.routes[0]
+        var coors = route.polyline, pl = [];
+        //坐标解压（返回的点串坐标，通过前向差分进行压缩）
+        var kr = 1000000;
+        for (var i = 2; i < coors.length; i++) {
+          coors[i] = Number(coors[i - 2]) + Number(coors[i]) / kr;
+        }
+        //将解压后的坐标放入点串数组pl中
+        for (var i = 0; i < coors.length; i += 2) {
+          pl.push({ latitude: coors[i], longitude: coors[i + 1] })
+        }
+        this.setData({
+          // 将路线的起点设置为地图中心点
+          latitude:pl[0].latitude,
+          longitude:pl[0].longitude,
+          // 绘制路线
+          polyline: [{
+            points: pl,
+            color: '#58c16c',
+            width: 4,
+            borderColor: '#2f693c',
+            borderWidth: 1
+          }],
+          // markers: [{
+          //   id: 3,
+          //   latitude: pl[0].latitude,
+          //   longitude: pl[0].longitude,
+          //   iconPath: '/image/start-icon.png',
+          //   name: 'T.I.T 创意园',
+          //   width: 50, // 标记点图标宽度
+          //   height: 55 // 标记点图标高度
+          // }, {
+          //   id: 4,
+          //   latitude: 39.920067,
+          //   longitude: 116.44352,
+          //   iconPath: '/image/end-icon.png',
+          //   name: '终点',
+          //   width: 50, // 标记点图标宽度
+          //   height: 55 // 标记点图标高度
+          // }]
+        })
+      },
+      fail: (err) => {
+        console.error(err)
+      }
+    })
+  },
+  // 禁止滚动
+  openRegular() {
+    this.setData({
+      showCity: true
+    })
+  },
+
+  // 选中城市
+  selectAddress() {
+    console.log(app.globalData.address)
+    this.onLoad()
+    this.onShow()
+  }
 })
 

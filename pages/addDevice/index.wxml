@@ -25,22 +25,16 @@
         placeholder="输入搜索位置"
         input-align="right"
         bind:click-icon="onClickIcon"
-        bind:focus='addressFocus'
+        catch:tap='addressFocus'
+        readonly
         model:value="{{ devicePosition }}"
       />
       <van-field
         clearable
         label="详细地址"
-        placeholder="请输入"
+        placeholder="请填写详细位置，或关键建筑标识"
         input-align="right"
         model:value="{{ address }}"
-      />
-      <van-field
-        clearable
-        label="邮箱"
-        placeholder="请输入"
-        input-align="right"
-        model:value="{{ email }}"
       />
       <van-field
         clearable
@@ -51,26 +45,13 @@
       />
       <van-field
         clearable
-        label="设备编码"
-        placeholder="请输入"
-        input-align="right"
-        model:value="{{ device_code }}"
-      />
-      <van-field
-        clearable
         label="品牌联系方式"
         placeholder="请输入"
         input-align="right"
         model:value="{{ brand_contact }}"
       />
-      <van-field
-        clearable
-        label="设备周围监控"
-        placeholder="请输入个数"
-        input-align="right"
-        type="number"
-        model:value="{{ around_monitor }}"
-      />
+      <van-cell title-class='cell-title-style' catch:tap="showMonitor" is-link value="{{around_monitor}}" title="设备周围监控" border="{{false}}">
+      </van-cell>
     </van-cell-group>
   </view>
   <view class="device-excharge-content device-exhcarge-content">
@@ -117,7 +98,11 @@
   </view>
   <view class="device-excharge-content device-desicribtion-img">
     <van-cell-group border="{{ false }}">
-      <van-cell title="设备照片（选填）" label="请上传真实、清晰的设备照片，有助于审核" border="{{ false }}" />
+      <van-cell
+        title="设备照片"
+        label="充电设备整体图（必上传）扫码充电二维码图（必上传，需要清晰可扫码）设备操作流程说明图（必上传）拍摄设备周边标志性建筑/商户图片，方便定位及审核（选择上传）"
+        border="{{ false }}"
+      />
     </van-cell-group>
     <van-uploader
       file-list="{{ fileList }}"
@@ -137,6 +122,8 @@
     position="bottom"
     custom-style="height: 90%;"
     bind:close="onClose"
+    z-index="10000"
+    root-portal="{{true}}"
   >
   <scroll-view
     bindscrolltolower="scrollToLower"
@@ -148,7 +135,7 @@
       <van-search
       value="{{ addressValue }}"
       label="地址"
-      focus="{{true}}"
+      focus="{{focusFlag}}"
       placeholder="请输入搜索关键词"
       use-action-slot
       bind:search="searchPosition"
@@ -172,4 +159,11 @@
   <view class="process-wrapper" wx:if="{{showProcess}}">
     <van-circle value="{{ processValue }}"  text="{{processValue}}%" />
   </view>
+  <van-toast id="van-toast" />
+  <van-action-sheet
+    show="{{ monitorShow }}"
+    actions="{{ actions }}"
+    bind:close="onCloseAction"
+    bind:select="onSelect"
+  />
 </view>

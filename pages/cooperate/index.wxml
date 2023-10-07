@@ -21,6 +21,7 @@
         label="公司名称"
         placeholder="请输入"
         input-align="right"
+        disabled="{{!choiceDeviceValue}}"
         model:value="{{ company_name }}"
       />
       <van-field
@@ -46,7 +47,7 @@
       />
     </van-cell-group>
   </view>
-  <view class="device-excharge-type-wrapper">
+  <view class="device-excharge-type-wrapper" wx:if="{{choiceDeviceValue}}">
     <view class="excharge-type-title">公司规模</view>
     <view class="excharge-type-data-wrapper">
       <view

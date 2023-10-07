@@ -4,8 +4,9 @@
   "navigationBarBackgroundColor": "#0D7AC2",
   "navigationStyle": "custom", 
   "usingComponents": {
-    "van-nav-bar": "@vant/weapp/nav-bar/index",
+    "navigation-bar": "/pages/componets/indexNavbar/index",
     "van-search": "@vant/weapp/search/index",
-    "big-image": "/pages/componets/bigImage/index"
+    "big-image": "/pages/componets/bigImage/index",
+    "get-nick": "/pages/componets/getNickName/index"
   }
 }

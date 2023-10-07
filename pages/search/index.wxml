@@ -16,18 +16,19 @@
         input-class="search-input-style"
       >
       </van-search>
-      <image src="/image/home-search-icon.png" class="search-icon" catchtap="showChargeType" />
+      <van-dropdown-menu active-color="#1989fa" custom-class='search-dropdown-menu' root-portal="{{true}}">
+        <van-dropdown-item bind:change="menuChange" value="{{ value1 }}" options="{{ option1 }}" />
+      </van-dropdown-menu>
+      <!-- <image src="/image/home-search-icon.png" class="search-icon" catchtap="showChargeType" /> -->
     </view>
     <view class="charge-item-wrapper">
-      <view 
-        wx:for="{{chargeBtnArray}}"
-        wx:key="index"
-        class="{{ choiceTypeValue === item.id ? 'charge-item charge-item-selected' : 'charge-item' }}"
-        data-index="{{item.id}}"
-        catchtap="choiceType"
-      >
-        <image src="{{ choiceTypeValue === item.id ? item.selectIcon : item.icon}}" class="charge-img" wx:if="{{index !== 0}}" />
-        <text>{{item.name}}</text>
+      <view>
+        <text class="search-current-title">当前定位：</text>
+        <text class="search-current-content">{{currentPosition}}</text>
+      </view>
+      <view catch:tap="resetPosition">
+        <image src="/image/position.png" class="position-img" />
+        <text class="search-reset-position">重新定位</text>
       </view>
     </view>
   </view>
@@ -41,7 +42,9 @@
     enhanced="{{true}}"
   >
     <view class="search-placeholder-div"></view>
-    <view class="checked-mark-wrapper" wx:for="{{searchData}}" wx:key="index">
+    <view class="serachr-fenge"></view>
+    <text class="search-fujin-title">附近充电设备</text>
+    <view class="checked-mark-wrapper" wx:for="{{searchData}}" wx:key="index" catch:tap="detailHandle" data-item="{{item}}">
       <view class="mark-content-top">
         <view class="content-img">
           <image src="{{item.pic_cover}}" class="content-img-style" />
@@ -73,12 +76,38 @@
           </view>
           <text class="type-chatou-num">插头：{{item.device_port}}个</text>
         </view>
-        <view class="checked-content-go-wrapper">
+        <view class="checked-content-go-wrapper" catch:tap="goHere" data-item="{{item}}">
           <image src="/image/home-checked-jiantou.png" class="go-btn-text-icon" />
           <text>去这里</text>
         </view>
       </view>
     </view>
   </scroll-view>
-  
+  <van-popup
+    show="{{ show }}"
+    bind:close="onClose"
+    round
+    position="bottom"
+    custom-style="height: 80%"
+  >
+    <view class="search-content-wrapper">
+      <van-empty wx:if="{{!resultData.length}}" description="暂无数据" />
+      <view class="search-result-item" wx:for="{{resultData}}" wx:key="index">
+        <view>
+          <view>
+            <image src="/image/search-address-icon.png" class="search-address-icon" />
+            <text class="search-address-title">{{item.title}}</text>
+          </view>
+          <view class="search-address-content">{{item.address}}</view>
+        </view>
+        <view class="search-fujin-btn" catch:tap="searchVicinity" data-item="{{item}}">
+          <text>附近设备</text>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{searchParam.isLoadMore}}" class="search-more-load" catch:tap="loadMore">
+      <text>查看更多</text>
+      <image src='/image/more-icon.png' class="search-more-icon" />
+    </view>
+  </van-popup>
 </page-meta>

@@ -2,9 +2,9 @@
   <view class="my-placeholder"></view>
   <view class="my-content">
     <view class="my-user-portrait-wrapper">
-    <image src='{{userData.avatar}}' class="my-portrait" />
+      <image src='{{avatarUrl || "/image/no-login.png"}}' class="my-portrait" catch:tap="getUserInfoHanle" />
     </view>
-    <view class="my-user-name">{{userData.username}}</view>
+    <view class="my-user-name" catch:tap="getUserInfoHanle">{{nickName || '点击登录'}}</view>
     <view wx:if="{{ifLogin}}" class="my-user-gongxian" catchtap="contributeHandle">
       <text>贡献值：{{userData.contribute || 0}}</text>
       <van-icon name="arrow" />
@@ -33,4 +33,5 @@
       </view>
     </view>
   </view>
+  <get-nick show="{{showLogin}}" bind:loginSure="loginSureHandle"></get-nick>
 </page-meta>

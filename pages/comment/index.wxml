@@ -77,8 +77,8 @@
         color="#ffd21e"
         void-icon="star"
         void-color="#eee"
-        bind:change="starLevel"
         custom-class='popup-rate-wrapper'
+        bind:change="rateChange"
       />
     </view>
     <view class="popup-pingjia-wrapper">

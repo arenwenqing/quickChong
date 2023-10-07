@@ -1,5 +1,7 @@
 // pages/search/index.js
 import { url } from '../../utils/util'
+var QQMapWX = require('../../libs/qqmap-wx-jssdk.js')
+const app = getApp()
 Page({
 
   /**
@@ -32,14 +34,166 @@ Page({
     searchData: [],
     currentPage: 1,
     ifLoadMore: true,
-    currentValue: ''
+    currentValue: '',
+    option1: [
+      { text: '全部', value: '' },
+      { text: '充电桩', value: '充电桩' },
+      { text: '换电柜', value: '换电柜' },
+      { text: '充电柜', value: '充电柜' }
+    ],
+    value1: '',
+    currentPosition: '',
+    latitude: '',
+    longitude: '',
+    resultData: [],
+    show: false,
+    searchParam: {
+      page: 1,
+      value: '',
+      isLoadMore: true
+    },
+    oldMessage: {
+      text: '',
+      position: {}
+    }
+  },
+
+  // 查看详情
+  detailHandle(e) {
+    const tempObj = e.currentTarget.dataset.item
+    const latitude = tempObj.coordinate.split(',')[0]
+    const longitude = tempObj.coordinate.split(',')[1]
+    wx.setStorageSync('detailObj', JSON.stringify({
+      id: tempObj.id,
+      latitude,
+      longitude
+    }))
+    wx.switchTab({
+      url: `/pages/index/index?id=${tempObj.id}&&latitude=${latitude}&&longitude=${longitude}`,
+    })
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    this.qqmapsdk = new QQMapWX({
+      key: '2IQBZ-GCWLL-DSGPF-EJPAM-5HDEV-ILB4O'
+    });
+    this.qqmapsdk.reverseGeocoder({
+      location: {
+        latitude: options?.latitude * 1,
+        longitude: options?.longitude * 1
+      },
+      success: (res) => {
+        this.setData({
+          currentPosition: res.result.formatted_addresses.recommend,
+          latitude: options?.latitude * 1,
+          longitude: options?.longitude * 1,
+          oldMessage: {
+            text: res.result.formatted_addresses.recommend,
+            position: {
+              latitude: options?.latitude * 1,
+              longitude: options?.longitude * 1,
+            }
+          }
+        })
+      },
+      fail: err => {
+        console.error(err)
+      }
+    })
+  },
 
+  // 地址搜索
+  onSearch(e) {
+    if (!e.detail.trim()) return
+    this.setData({
+      resultData: [],
+      searchParam: {
+        page: 1,
+        value: e.detail && e.detail.trim(),
+        isLoadMore: true
+      }
+    }, () => {
+      this.searchRequest()
+    })
+  },
+
+  // 搜索请求
+  searchRequest() {
+    this.qqmapsdk.search({
+      keyword: this.data.searchParam.value,
+      location: `${this.data.latitude},${this.data.longitude}`,
+      address_format: 'short',
+      filter: 'category=大厦,店铺,小区,学校,公交站',
+      page_index: this.data.searchParam.page,
+      success: (res) => {
+        this.setData({
+          resultData: this.data.resultData.concat(res.data || []),
+          show: true,
+          searchParam: {
+            ...this.data.searchParam,
+            isLoadMore: res.data.length === 10
+          }
+        })
+      },
+      fail: (err) => {
+        console.error(err)
+      }
+    })
+  },
+
+  // 加载更多
+  loadMore() {
+    if (!this.data.searchParam.isLoadMore) return
+    this.setData({
+      searchParam: {
+        ...this.data.searchParam,
+        page: this.data.searchParam.page + 1,
+        isLoadMore: true
+      }
+    }, () => {
+      this.searchRequest()
+    })
+  },
+
+  // 附近设备
+  searchVicinity(e) {
+    const tempObj = e.currentTarget.dataset.item
+    console.log(tempObj)
+    wx.setStorageSync('currentPosition', JSON.stringify({
+      latitude: tempObj.location.lat,
+      longitude: tempObj.location.lng
+    }))
+    this.setData({
+      show: false,
+      currentPage: 1,
+      searchData: [],
+      currentPosition: tempObj.title,
+      ifLoadMore: true
+    }, () => {
+      this.getDeviceList(this.data.currentValue)
+    })
+  },
+
+  // 重新定位
+  resetPosition() {
+    wx.setStorageSync('currentPosition', JSON.stringify(this.data.oldMessage.position))
+    this.setData({
+      currentPage: 1,
+      searchData: [],
+      currentPosition: this.data.oldMessage.text,
+      ifLoadMore: true
+    }, () => {
+      this.getDeviceList(this.data.currentValue)
+    })
+  },
+
+  onClose() {
+    this.setData({
+      show: false
+    })
   },
 
   /**
@@ -77,23 +231,33 @@ Page({
 
   },
 
-  choiceType: function (e) {
-    const index = e.currentTarget.dataset.index
-    const currentName = this.data.chargeBtnArray.find(item => item.id === e.currentTarget.dataset.index)
+  // choiceType: function (e) {
+  //   const index = e.currentTarget.dataset.index
+  //   const currentName = this.data.chargeBtnArray.find(item => item.id === e.currentTarget.dataset.index)
+  //   this.setData({
+  //     choiceTypeValue: e.currentTarget.dataset.index,
+  //     searchData: [],
+  //     currentPage: 1,
+  //     currentValue: index === 1 ? '' : currentName.name
+  //   })
+  //   this.getDeviceList(index === 1 ? '' : currentName.name )
+  // },
+
+  menuChange(value) {
     this.setData({
-      choiceTypeValue: e.currentTarget.dataset.index,
+      // choiceTypeValue: e.currentTarget.dataset.index,
       searchData: [],
       currentPage: 1,
-      currentValue: index === 1 ? '' : currentName.name
+      currentValue: value.detail
     })
-    this.getDeviceList(index === 1 ? '' : currentName.name )
+    this.getDeviceList(value.detail)
   },
 
-  showChargeType() {
-    this.setData({
-      showMoreType: !this.data.showMoreType
-    })
-  },
+  // showChargeType() {
+  //   this.setData({
+  //     showMoreType: !this.data.showMoreType
+  //   })
+  // },
 
   backHome() {
     wx.switchTab({
@@ -108,7 +272,7 @@ Page({
       url: url + '/api/device/nearbyList',
       method: 'GET',
       data: {
-        city: '北京市',
+        city: app.globalData.address,
         device_type: type,
         coordinate: `${currentPosition.latitude},${currentPosition.longitude}`,
         page: this.data.currentPage,
@@ -119,7 +283,7 @@ Page({
         const data = res.data.data?.list || []
         this.setData({
           searchData: this.data.searchData.concat(data),
-          currentPage: (res.data.data.page * 1) + 1,
+          currentPage: (this.data.currentPage * 1) + 1,
           ifLoadMore: data.length === 20
         })
       },
@@ -141,6 +305,17 @@ Page({
   showCommentDetail(e) {
     wx.navigateTo({
       url: `/pages/comment/index?id=${e.currentTarget.dataset.id}`,
+    })
+  },
+
+  // 去这里
+  goHere(e) {
+    const tempObj = e.currentTarget.dataset.item
+    wx.openLocation({
+      latitude: tempObj.coordinate.split(',')[0] * 1, // 目的地纬度
+      longitude: tempObj.coordinate.split(',')[1] * 1, // 目的地经度
+      name: tempObj.name, // 目的地名称
+      address: tempObj.address, // 目的地地址
     })
   },
 

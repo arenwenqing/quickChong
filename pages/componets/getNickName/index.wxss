@@ -1,0 +1,69 @@
+/* pages/componets/getNickName/index.wxss */
+.avatar-wrapper {
+  position: relative;
+  width: 140rpx;
+  height: 140rpx;
+  background-color: #fff;
+}
+.avatar-wrapper::after {
+  border: none;
+}
+.avatar-style {
+  width: 140rpx;
+  height: 140rpx;
+  position: relative;
+  right: 28rpx;
+}
+.avatar-style-photo {
+  display: block;
+  width: 50rpx;
+  height: 50rpx;
+  position: absolute;
+  bottom: 0rpx;
+  right: 5rpx;
+}
+.nick-style {
+  display: inline-block;
+  width: 100rpx;
+  margin-right: 10rpx;
+}
+.mp-form-style {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 450rpx;
+  margin: 0 auto;
+  padding: 40rpx 0;
+}
+.avatar-placeholder {
+  height: 30rpx;
+}
+.wrapper2 {
+  position: relative;
+  width: 600rpx;
+  height: 530rpx;
+  border-radius: 20rpx;
+  background: #fff;
+  margin: 0 auto;
+}
+.van-overlay-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-title {
+  height: 80rpx;
+  text-align: center;
+  line-height: 80rpx;
+}
+.login-suer-btn {
+  width: 500rpx !important;
+}
+.login-close-icon {
+  width: 40rpx;
+  height: 40rpx;
+  display: inline-block;
+  position: absolute;
+  right: 5rpx;
+  top: 5rpx;
+}

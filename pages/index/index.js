@@ -286,6 +286,7 @@ Page({
     const selectedMarker = this.data.markers.find(marker => marker.id === markerId);
     // 在这里可以根据 selectedMarker 执行需要的操作，比如显示信息窗口等
     console.log("点击了标记点：" + selectedMarker.id);
+    console.log('this.data.markers====', this.data.markers)
     this.setData({
       markCheckedShow: true
     }, () => {
@@ -314,7 +315,8 @@ Page({
 
   choiceType: function (e) {
     this.setData({
-      choiceTypeValue: e.currentTarget.dataset.index
+      choiceTypeValue: e.currentTarget.dataset.index,
+      markCheckedShow: false
     }, () => {
       const obj = this.data.chargeBtnArray.find(item => item.id === e.currentTarget.dataset.index)
       const getCenter = JSON.parse(wx.getStorageSync('centerPosition') || '{}')
@@ -421,7 +423,7 @@ Page({
               deviceDetail: res.data.data
             })
             // 开始路线规划
-            this.line(`${latitude},${longitude}`, `${res.data.data.coordinate}`)
+            // this.line(`${latitude},${longitude}`, `${res.data.data.coordinate}`)
           },
           fail: () => {
             wx.showToast({

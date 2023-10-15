@@ -28,3 +28,6 @@
   top: 6rpx;
   left: 5rpx;
 }
+.index-current-city {
+  font-weight: bolder;
+}

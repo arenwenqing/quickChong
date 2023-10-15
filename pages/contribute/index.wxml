@@ -3,13 +3,15 @@
   <view class="contribute-item">
     <view class="contribute-title">一. 规则是什么</view>
     <view class="contribute-content">
-      请对要纠错的信息内容进行简要描述，如需要请对要纠错的信息内容进行简要描述，如需要请对要纠错的信息内容进行简要描述，如需要
+      <view>参与发现充电设备，并审核通过可获得100个贡献值</view>
+      <view>参与充电设备纠错，并审核通过可获得5个贡献值</view>
+      <view>参与设备评价=1个贡献值</view>
     </view>
   </view>
-  <view class="contribute-item">
+  <!-- <view class="contribute-item">
     <view class="contribute-title">二. 规则是什么</view>
     <view class="contribute-content">
       请对要纠错的信息内容进行简要描述，如需要请对要纠错的信息内容进行简要描述，如需要请对要纠错的信息内容进行简要描述，如需要
     </view>
-  </view>
+  </view> -->
 </page-meta>

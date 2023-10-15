@@ -23,6 +23,7 @@
         input-align="right"
         disabled="{{!choiceDeviceValue}}"
         model:value="{{ company_name }}"
+        wx:if="{{!choiceDeviceValue}}"
       />
       <van-field
         clearable

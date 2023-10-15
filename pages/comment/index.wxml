@@ -40,8 +40,8 @@
           void-color="#eee"
           readonly
         />
-        <view class="comment-item-content-tag">
-          <van-tag type="primary" custom-class='tag-style' round plain wx:for="{{item.tag}}" wx:key="index">{{item}}</van-tag>
+        <view class="comment-item-content-tag" wx:if="{{item.tag.length}}">
+          <van-tag  type="primary" custom-class='tag-style' round plain wx:for="{{item.tag}}" wx:key="index">{{item}}</van-tag>
         </view>
         <view class="comment-item-content">
           {{item.comment}}

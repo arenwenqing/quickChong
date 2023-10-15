@@ -129,7 +129,7 @@ Page({
       success: (res) => {
         const tempArr = res.data.data.list || []
         tempArr.forEach(item => {
-          item.tag = item.tag.split(',')
+          item.tag = item.tag?.split(',') || []
         })
         this.setData({
           commentData: this.data.commentData.concat(tempArr),
@@ -313,6 +313,9 @@ Page({
 
   // 发表评价
   commentSubmit() {
+    if (!this.data.star_level) {
+      return Toast('请评等级');
+    }
     wx.request({
       url: url + '/api/user/comment',
       method: 'POST',

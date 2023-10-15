@@ -10,16 +10,18 @@
   <view class="help-content">
     <van-collapse accordion value="{{ activeName }}" bind:change="onChange" border="{{false}}">
       <van-collapse-item title="充电桩、充电柜、换电柜区别" name="1" border="{{false}}" size="large">
-        代码是写出来给人看的，附带能在机器上运行
+        <view>充电桩：通过将车辆停在固定充电位置，连接固定充电插座为车辆充电，需要自备充电器(通过固定位置的充电插座，连接车身为车辆充电)</view>
+        <view>充电柜：需要取下车辆电瓶，扫码开启充电柜门，将电瓶与充电器放置柜内连接充电使用，需要自备充电器（将电池及充电器放至充电柜门内为车辆电池充电）</view>
+        <view>换电柜：通过扫码确认适用的电池信息，取出满电的电瓶，再将原电池放回柜内自动充电，实现快速更换，一般对车辆的品牌与电池型号有要求（通过更换电池的方式为车辆充电，一般对车辆的品牌与电池型号有要求）</view>
       </van-collapse-item>
       <van-collapse-item title="如何发现充电设备" name="2" border="{{false}}" size="large">
-        代码是写出来给人看的，附带能在机器上运行
+        可通过点击主页左下角的——发现充电设备，和大家一起点亮地图
       </van-collapse-item>
-      <van-collapse-item title="贡献值能用来做什么" name="3" border="{{false}}" size="large">
-        代码是写出来给人看的，附带能在机器上运行
+      <van-collapse-item title="如何获取贡献值" name="3" border="{{false}}" size="large">
+        通过主页-发现设备-提交并审核成功、参与设备评价、设备纠错并审核成功后均可获得贡献值
       </van-collapse-item>
       <van-collapse-item title="联系客服" name="4" border="{{false}}" size="large">
-        代码是写出来给人看的，附带能在机器上运行
+        请联系mdks_serv@163.com
       </van-collapse-item>
     </van-collapse>
   </view>

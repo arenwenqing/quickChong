@@ -6,7 +6,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    ifLogin: wx.getStorageSync('ticket') ? true : false,
+    ifLogin: wx.getStorageSync('nickName') ? true : false,
     userData: {},
     avatarUrl: wx.getStorageSync('avatarUrl'),
     nickName: wx.getStorageSync('nickName'),
@@ -18,7 +18,7 @@ Page({
    */
   onLoad(options) {
     this.setData({
-      ifLogin: wx.getStorageSync('ticket') ? true : false,
+      ifLogin: wx.getStorageSync('nickName') ? true : false,
       avatarUrl: wx.getStorageSync('avatarUrl'),
       nickName: wx.getStorageSync('nickName')
     })
@@ -79,7 +79,7 @@ Page({
         avatarUrl: wx.getStorageSync('avatarUrl'),
         nickName: wx.getStorageSync('nickName'),
         showLogin: false,
-        ifLogin: wx.getStorageSync('ticket') ? true : false
+        ifLogin: wx.getStorageSync('nickName') ? true : false
       })
     }, 500)
   },

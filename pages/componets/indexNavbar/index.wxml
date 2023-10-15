@@ -2,10 +2,10 @@
 <!-- 自定义顶部栏 -->
 <view class="nav-bar" style="height:{{navBarHeight}}px;">
   <view class="search" style="height:{{menuHeight}}px; min-height:{{menuHeight}}px; line-height:{{menuHeight}}px; left:{{menuRight}}px; top:{{menuTop}}px;">
-    <view catch:tap="switchChangeAddress">
+    <view>
       <image src="/image/address-index-icon.png" class="index-address-icon" />
-      <text>{{currentCity}}</text>
-      <image src="/image/index-title-icon.png" class="index-title-icon" />
+      <text class="index-current-city">{{currentCity}}</text>
+      <!-- <image src="/image/index-title-icon.png" class="index-title-icon" /> -->
     </view>
   </view>
 </view>

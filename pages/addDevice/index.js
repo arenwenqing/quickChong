@@ -61,7 +61,7 @@ Page({
     brand: null, // 品牌
     device_code: null, // 设备编码
     brand_contact: null, // 联系方式
-    around_monitor: '请选择', // 监控
+    around_monitor: '', // 监控
     deveiceData: {
       is_scancode: false, // 扫码充电
       is_rainshelter: false, // 是否有防雨棚
@@ -192,6 +192,16 @@ Page({
       deveiceData: {
         ...this.data.deveiceData,
         picture: tempPicture
+      }
+    })
+  },
+
+  // 描述
+  descriptionValueChange(e) {
+    this.setData({
+      deveiceData: {
+        ...this.data.deveiceData,
+        description: e.detail
       }
     })
   },

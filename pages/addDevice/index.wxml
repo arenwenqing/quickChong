@@ -50,7 +50,7 @@
         input-align="right"
         model:value="{{ brand_contact }}"
       />
-      <van-cell title-class='cell-title-style' catch:tap="showMonitor" is-link value="{{around_monitor}}" title="设备周围监控" border="{{false}}">
+      <van-cell title-class='cell-title-style' value-class='monitor-value-style' catch:tap="showMonitor" is-link value="{{around_monitor}}" title="设备周围监控" border="{{false}}">
       </van-cell>
     </van-cell-group>
   </view>
@@ -92,6 +92,7 @@
         :autosize="{ maxHeight: 100, minHeight: 50 }"
         border="{{ false }}"
         input-class="text-area-style"
+        bind:change="descriptionValueChange"
         model:value="{{ deveiceData.description }}"
       />
     </van-cell-group>

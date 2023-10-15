@@ -180,3 +180,9 @@
 .radio-text {
   font-size: 25rpx;
 }
+.van-cell__value {
+  /* color: var(--field-input-text-color,#323233) !important; */
+}
+.monitor-value-style {
+  color: var(--field-input-text-color,#323233) !important;
+}

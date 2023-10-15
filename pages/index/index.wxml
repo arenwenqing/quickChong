@@ -27,6 +27,7 @@
         catchtap="toSearch"
         clearable="{{false}}"
         input-class="search-input-style"
+        readonly
       >
       </van-search>
       <image src="/image/home-search-icon.png" class="search-icon" catchtap="toSearch" />

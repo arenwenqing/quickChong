@@ -1,3 +1,5 @@
+var amapFile = require('../libs/amap-wx.130.js')
+var QQMapWX = require('../libs/qqmap-wx-jssdk.js')
 const formatTime = date => {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -35,5 +37,9 @@ const getUserInfo = (cb) => {
 module.exports = {
   formatTime,
   url,
-  getUserInfo
+  getUserInfo,
+  amapFile: new amapFile.AMapWX({key:'24c3089f745d73fccd2245382fbb2942'}),
+  QQMapWX: new QQMapWX({
+    key: '2IQBZ-GCWLL-DSGPF-EJPAM-5HDEV-ILB4O'
+  })
 }

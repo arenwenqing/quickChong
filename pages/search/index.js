@@ -1,6 +1,5 @@
 // pages/search/index.js
-import { url } from '../../utils/util'
-var QQMapWX = require('../../libs/qqmap-wx-jssdk.js')
+import { url, QQMapWX, amapFile } from '../../utils/util'
 const app = getApp()
 Page({
 
@@ -77,10 +76,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.qqmapsdk = new QQMapWX({
-      key: '2IQBZ-GCWLL-DSGPF-EJPAM-5HDEV-ILB4O'
-    });
-    this.qqmapsdk.reverseGeocoder({
+    QQMapWX.reverseGeocoder({
       location: {
         latitude: options?.latitude * 1,
         longitude: options?.longitude * 1
@@ -122,11 +118,11 @@ Page({
 
   // 搜索请求
   searchRequest() {
-    this.qqmapsdk.search({
-      keyword: this.data.searchParam.value,
+    QQMapWX.search({
+      keyword: `${this.data.searchParam.value}`,
       location: `${this.data.latitude},${this.data.longitude}`,
       address_format: 'short',
-      filter: 'category=大厦,店铺,小区,学校,公交站',
+      // filter: 'category=大厦,店铺,小区,学校,公交站',
       page_index: this.data.searchParam.page,
       success: (res) => {
         this.setData({

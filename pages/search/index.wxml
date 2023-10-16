@@ -74,7 +74,7 @@
             <image src="/image/home-checked-juxing.png" />
             <text class="checked-content-type-text">{{ item.loc_type === 1 ? '小区' : '公用'}}</text>
           </view>
-          <text class="type-chatou-num">插头：{{item.device_port}}个</text>
+          <text class="type-chatou-num">端口：{{item.device_port}}个</text>
         </view>
         <view class="checked-content-go-wrapper" catch:tap="goHere" data-item="{{item}}">
           <image src="/image/home-checked-jiantou.png" class="go-btn-text-icon" />

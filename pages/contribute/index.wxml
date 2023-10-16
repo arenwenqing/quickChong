@@ -1,7 +1,7 @@
 <!--pages/contribute/index.wxml-->
 <page-meta>
   <view class="contribute-item">
-    <view class="contribute-title">一. 规则是什么</view>
+    <view class="contribute-title">一. 贡献值规则</view>
     <view class="contribute-content">
       <view>参与发现充电设备，并审核通过可获得100个贡献值</view>
       <view>参与充电设备纠错，并审核通过可获得5个贡献值</view>

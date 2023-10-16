@@ -65,12 +65,12 @@
         <view class="checked-tag-wrapper">
           <text class="tag-item" wx:if="{{deviceDetail.is_scancode}}">扫码充电</text>
           <text class="tag-item" wx:if="{{deviceDetail.is_rainshelter}}">有防雨措施</text>
-          <text class="tag-item" wx:if="{{deviceDetail.is_charger}}">无需自充电器</text>
-          <text class="tag-item" wx:if="{{!deviceDetail.is_charger}}">需自充电器</text>
+          <text class="tag-item" wx:if="{{deviceDetail.is_charger}}">无需自备充电器</text>
+          <text class="tag-item" wx:if="{{!deviceDetail.is_charger}}">需自备充电器</text>
         </view> 
         <view class="checked-content-detail">
           <text>{{deviceDetail.distance}}</text>
-          <text class="checked-content-address">{{deviceDetail.address}}</text>
+          <text class="checked-content-address">{{deviceDetail.name}}</text>
         </view>
         <view class="checked-pinlun-wrapper">
           <van-rate
@@ -92,7 +92,7 @@
           <image src="/image/home-checked-juxing.png" />
           <text class="checked-content-type-text">{{ deviceDetail.loc_type === 1 ? '小区' : '公用'}}</text>
         </view>
-        <text class="type-chatou-num">插头：{{deviceDetail.device_port}}个</text>
+        <text class="type-chatou-num">端口：{{deviceDetail.device_port}}个</text>
       </view>
       <text class="jiu-cuo-style" catchtap="goErrorCorrection" data-id="{{deviceDetail.id}}">去纠错？</text>
       <view class="checked-content-go-wrapper" catchtap="goPosition">

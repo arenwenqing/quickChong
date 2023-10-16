@@ -129,7 +129,7 @@ Page({
       success: (res) => {
         const tempArr = res.data.data.list || []
         tempArr.forEach(item => {
-          item.tag = item.tag?.split(',') || []
+          item.tag = item.tag ? item.tag.split(',') : []
         })
         this.setData({
           commentData: this.data.commentData.concat(tempArr),

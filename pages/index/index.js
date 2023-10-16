@@ -1,8 +1,17 @@
 // index.js
-import { url, getUserInfo } from '../../utils/util'
-var QQMapWX = require('../../libs/qqmap-wx-jssdk.js')
+import { url, getUserInfo, QQMapWX } from '../../utils/util'
 // 获取应用实例
 const app = getApp()
+const mapIcon = {
+  '充电桩': '/image/chongdiangzhuang-map-icon.png',
+  '换电柜': '/image/huandiangui-map-icon.png',
+  '充电柜': '/image/chongdiangui-map-icon.png'
+}
+const selectMapIcon = {
+  '充电桩': '/image/dianzhuang-xuan.png',
+  '换电柜': '/image/huandiangui-xuan.png',
+  '充电柜': '/image/diangui-xuan.png'
+}
 Page({
   data: {
     chargeBtnArray: [{
@@ -286,18 +295,27 @@ Page({
     const selectedMarker = this.data.markers.find(marker => marker.id === markerId);
     // 在这里可以根据 selectedMarker 执行需要的操作，比如显示信息窗口等
     console.log("点击了标记点：" + selectedMarker.id);
-    console.log('this.data.markers====', this.data.markers)
-    this.setData({
-      markCheckedShow: true
-    }, () => {
-      this.getDeviceDetail(selectedMarker)
+    const tempArr = JSON.parse(JSON.stringify(this.data.markers))
+    tempArr.forEach(item => {
+      item.iconPath = item.id === markerId ? item.selectIconPath : mapIcon[item.deviceType]
     })
+    this.setData({
+      markers: tempArr
+    })
+    this.getDeviceDetail(selectedMarker)
   },
 
   // 关闭详情
   closeMarkDetail() {
     this.setData({
       markCheckedShow: false
+    })
+    const tempArr = JSON.parse(JSON.stringify(this.data.markers))
+    tempArr.forEach(item => {
+      item.iconPath = mapIcon[item.deviceType]
+    })
+    this.setData({
+      markers: tempArr
     })
   },
 
@@ -375,11 +393,6 @@ Page({
           return this.login()
         }
         const data = res.data.data?.list || []
-        const mapIcon = {
-          '充电桩': '/image/chongdiangzhuang-map-icon.png',
-          '换电柜': '/image/huandiangui-map-icon.png',
-          '充电柜': '/image/chongdiangui-map-icon.png'
-        }
         const tempMarkers = data.map((item, index) => {
           const coordinate = item.coordinate.split(',')
           return {
@@ -387,6 +400,9 @@ Page({
             latitude: coordinate[0] * 1,
             longitude: coordinate[1] * 1,
             iconPath: mapIcon[item.device_type],
+            selectIconPath: selectMapIcon[item.device_type],
+            deviceType: item.device_type,
+            joinCluster: true,
             width: 50, // 标记点图标宽度
             height: 55 // 标记点图标高度
           }
@@ -403,6 +419,9 @@ Page({
 
   // 获取设备详情
   getDeviceDetail(param) {
+    wx.showLoading({
+      title: '加载中...',
+    })
     wx.getLocation({
       type: 'gcj02',
       isHighAccuracy: true,
@@ -420,7 +439,8 @@ Page({
           },
           success: (res) => {
             this.setData({
-              deviceDetail: res.data.data
+              deviceDetail: res.data.data,
+              markCheckedShow: true
             })
             // 开始路线规划
             // this.line(`${latitude},${longitude}`, `${res.data.data.coordinate}`)
@@ -430,6 +450,9 @@ Page({
               title: '获取设备出错',
               icon: 'fail'
             })
+          },
+          complete: () => {
+            wx.hideLoading()
           }
         })
       },
@@ -447,18 +470,24 @@ Page({
       const options = JSON.parse(wx.getStorageSync('detailObj') || '{}')
       if (!options.id) return
       const markerId = options.id // 获取点击的标记点的 id
-      const selectedMarker = this.data.markers.find(marker => marker.id === markerId);
+      const selectedMarker = this.data.markers.find(marker => marker.id === markerId) || {}
+      if (!selectedMarker.id) return
       // 在这里可以根据 selectedMarker 执行需要的操作，比如显示信息窗口等
       console.log("点击了标记点：" + selectedMarker.id);
-      this.setData({
-        markCheckedShow: true
-      }, () => {
-        this.getDeviceDetail(selectedMarker)
+      const tempArr = JSON.parse(JSON.stringify(this.data.markers))
+      tempArr.forEach(item => {
+        item.iconPath = item.id === markerId ? item.selectIconPath : mapIcon[item.deviceType]
       })
+      this.getDeviceDetail(selectedMarker)
+      setTimeout(() => {
+        this.setData({
+          markers: tempArr
+        })
+      }, 500)
       this.mapCtx.moveToLocation({
         latitude: options.latitude * 1,
         longitude: options.longitude * 1,
-        success: function () {
+        success: () => {
           // 移动成功
           wx.removeStorageSync('detailObj')
         },
@@ -531,11 +560,7 @@ Page({
 
   // 路线规划
   line(from, to) {
-    this.qqmapsdk = new QQMapWX({
-      key: '2IQBZ-GCWLL-DSGPF-EJPAM-5HDEV-ILB4O'
-    });
-
-    this.qqmapsdk.direction({
+    QQMapWX.direction({
       mode: 'bicycling',
       from,
       to,
@@ -566,23 +591,6 @@ Page({
             borderColor: '#2f693c',
             borderWidth: 1
           }],
-          // markers: [{
-          //   id: 3,
-          //   latitude: pl[0].latitude,
-          //   longitude: pl[0].longitude,
-          //   iconPath: '/image/start-icon.png',
-          //   name: 'T.I.T 创意园',
-          //   width: 50, // 标记点图标宽度
-          //   height: 55 // 标记点图标高度
-          // }, {
-          //   id: 4,
-          //   latitude: 39.920067,
-          //   longitude: 116.44352,
-          //   iconPath: '/image/end-icon.png',
-          //   name: '终点',
-          //   width: 50, // 标记点图标宽度
-          //   height: 55 // 标记点图标高度
-          // }]
         })
       },
       fail: (err) => {

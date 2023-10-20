@@ -53,7 +53,7 @@
           <text class="checked-content-title">{{item.device_type}}</text>
           <view class="checked-content-detail">
             <text>{{item.distance}}</text>
-            <text class="checked-content-address">{{item.address}}</text>
+            <text class="checked-content-address">{{item.name}}</text>
           </view>
           <view class="checked-pinlun-wrapper">
             <van-rate

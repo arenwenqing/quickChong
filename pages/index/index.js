@@ -402,7 +402,7 @@ Page({
             iconPath: mapIcon[item.device_type],
             selectIconPath: selectMapIcon[item.device_type],
             deviceType: item.device_type,
-            joinCluster: true,
+            // joinCluster: true,
             width: 50, // 标记点图标宽度
             height: 55 // 标记点图标高度
           }

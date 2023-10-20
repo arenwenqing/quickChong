@@ -118,24 +118,54 @@ Page({
 
   // 搜索请求
   searchRequest() {
-    QQMapWX.search({
-      keyword: `${this.data.searchParam.value}`,
-      location: `${this.data.latitude},${this.data.longitude}`,
-      address_format: 'short',
-      // filter: 'category=大厦,店铺,小区,学校,公交站',
-      page_index: this.data.searchParam.page,
+    // QQMapWX.search({
+    //   keyword: `${this.data.searchParam.value}`,
+    //   location: `${this.data.latitude},${this.data.longitude}`,
+    //   address_format: 'short',
+    //   // filter: 'category=大厦,店铺,小区,学校,公交站',
+    //   page_index: this.data.searchParam.page,
+    //   success: (res) => {
+    //     this.setData({
+    //       resultData: this.data.resultData.concat(res.data || []),
+    //       show: true,
+    //       searchParam: {
+    //         ...this.data.searchParam,
+    //         isLoadMore: res.data.length === 10
+    //       }
+    //     })
+    //   },
+    //   fail: (err) => {
+    //     console.error(err)
+    //   }
+    // })
+    wx.request({
+      url: 'https://apis.map.qq.com/ws/place/v1/suggestion',
+      method: 'GET',
+      data: {
+        key: '2IQBZ-GCWLL-DSGPF-EJPAM-5HDEV-ILB4O',
+        keyword: `${this.data.searchParam.value}`,
+        region: app.globalData.address,
+        page_index:  this.data.searchParam.page,
+        page_size: 20,
+        location: `${this.data.latitude},${this.data.longitude}`
+      },
       success: (res) => {
         this.setData({
-          resultData: this.data.resultData.concat(res.data || []),
+          resultData: this.data.resultData.concat(res.data.data || []),
           show: true,
           searchParam: {
             ...this.data.searchParam,
-            isLoadMore: res.data.length === 10
+            isLoadMore: res.data.data.length === 20
           }
         })
       },
       fail: (err) => {
         console.error(err)
+      },
+      complete: () => {
+        this.setData({
+          addressLoading: false
+        })
       }
     })
   },

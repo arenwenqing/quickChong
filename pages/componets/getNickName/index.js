@@ -1,4 +1,5 @@
 // pages/componets/getNickName/index.js
+import { url } from '../../../utils/util'
 Component({
   /**
    * 组件的属性列表
@@ -49,6 +50,21 @@ Component({
       }
       this.setData({
         show: false
+      })
+      wx.request({
+        url: url + '/api/user/setProfile',
+        method: 'post',
+        data: {
+          username: this.data.nickNameValue,
+          avatar: this.data.avatarUrl,
+          ticket: wx.getStorageSync('ticket')
+        },
+        success: (res) => {
+          console.log(res.data)
+        },
+        fail: err => {
+          console.error(err)
+        }
       })
       this.triggerEvent('loginSure', {});
     },

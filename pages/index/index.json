@@ -7,6 +7,8 @@
     "navigation-bar": "/pages/componets/indexNavbar/index",
     "van-search": "@vant/weapp/search/index",
     "big-image": "/pages/componets/bigImage/index",
-    "get-nick": "/pages/componets/getNickName/index"
+    "get-nick": "/pages/componets/getNickName/index",
+    "van-uploader": "@vant/weapp/uploader/index",
+    "van-circle": "@vant/weapp/circle/index"
   }
 }

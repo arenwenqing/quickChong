@@ -34,6 +34,7 @@ const getUserInfo = (cb) => {
   })
 }
 
+// 高德 web 的key 516d5a816833c6ee44e3446e40ca22e3
 module.exports = {
   formatTime,
   url,

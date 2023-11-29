@@ -15,7 +15,7 @@
   </view>
   <view class="device-excharge-content device-desicribtion-img">
     <van-cell-group border="{{ false }}">
-      <van-cell title="设备照片（选填）" label="请上传真实、清晰的设备照片，有助于审核" border="{{ false }}" />
+      <van-cell title="设备照片（选填）" label="" border="{{ false }}" />
     </van-cell-group>
     <van-uploader
       file-list="{{ fileList }}"

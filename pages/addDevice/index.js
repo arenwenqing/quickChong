@@ -355,7 +355,8 @@ Page({
       city: choiceObj.city,
       coordinate: `${choiceObj.location.lat},${choiceObj.location.lng}`,
       devicePosition: choiceObj.title,
-      name: choiceObj.title
+      name: choiceObj.title,
+      address: choiceObj.address
     })
   },
 
@@ -401,6 +402,9 @@ Page({
         region: app.globalData.address,
         page_index: this.data.currentPageIndex,
         page_size: 20,
+        region_fix: 1,
+        get_subpois: 1,
+        policy: 1,
         location: `${currentPosion.latitude},${currentPosion.longitude}`
       },
       success: (res) => {

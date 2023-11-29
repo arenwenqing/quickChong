@@ -1,7 +1,14 @@
 // index.js
 import { url, getUserInfo, QQMapWX } from '../../utils/util'
+import Toast from '@vant/weapp/toast/toast';
 // 获取应用实例
 const app = getApp()
+let timeId = 0
+let commonMarkId = 0
+let detailLatiuteAndLongitude = {
+  latitude: 0,
+  longitude: 0
+}
 const mapIcon = {
   '充电桩': '/image/chongdiangzhuang-map-icon.png',
   '换电柜': '/image/huandiangui-map-icon.png',
@@ -54,7 +61,13 @@ Page({
       url: ''
     },
     showLogin: false,
-    showCity: false
+    showCity: false,
+    mapScal: 15,
+    fileList: [],
+    picture: [],
+    showProcess: false,
+    processValue: 0,
+    deviceId: 0
   },
   onReady: function (e) {
     this.mapCtx = wx.createMapContext('myMap')
@@ -91,6 +104,10 @@ Page({
   },
 
   onLoad: function (options) {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
     // 检查ticket是否存在
     if (wx.getStorageSync('ticket')) {
       // 先检查用户是否登录
@@ -177,6 +194,7 @@ Page({
       success: (res) => {
         wx.setStorageSync('ticket', res.data.data?.ticket)
         this.appForLocation()
+        this.onShow()
       },
       fail: (err) => {
         console.error('获取ticket失败：', err)
@@ -275,7 +293,12 @@ Page({
           wx.setStorageSync('currentPosition', JSON.stringify({ latitude: res.latitude, longitude: res.longitude }))
           // 根据当前的地图中心坐标，查看周围的设备
           const obj = this.data.chargeBtnArray.find(item => item.id === this.data.choiceTypeValue)
-          this.getDeviceList(obj.value, res.latitude, res.longitude)
+          if (timeId) {
+            clearTimeout(timeId)
+          }
+          timeId = setTimeout(() => {
+            this.getDeviceList(obj.value, detailLatiuteAndLongitude.latitude || res.latitude, detailLatiuteAndLongitude.longitude || res.longitude)
+          }, 500)
         },
         fail: (err) => {
           console.error(err)
@@ -310,6 +333,11 @@ Page({
     this.setData({
       markCheckedShow: false
     })
+    commonMarkId = 0
+    detailLatiuteAndLongitude = {
+      latitude: 0,
+      longitude: 0
+    }
     const tempArr = JSON.parse(JSON.stringify(this.data.markers))
     tempArr.forEach(item => {
       item.iconPath = mapIcon[item.deviceType]
@@ -334,7 +362,8 @@ Page({
   choiceType: function (e) {
     this.setData({
       choiceTypeValue: e.currentTarget.dataset.index,
-      markCheckedShow: false
+      markCheckedShow: false,
+      mapScal: 15
     }, () => {
       const obj = this.data.chargeBtnArray.find(item => item.id === e.currentTarget.dataset.index)
       const getCenter = JSON.parse(wx.getStorageSync('centerPosition') || '{}')
@@ -402,19 +431,41 @@ Page({
             iconPath: mapIcon[item.device_type],
             selectIconPath: selectMapIcon[item.device_type],
             deviceType: item.device_type,
-            // joinCluster: true,
-            width: 50, // 标记点图标宽度
-            height: 55 // 标记点图标高度
+            // joinCluster: true, // 聚合
+            width: 28 + 'px', // 标记点图标宽度
+            height: 40 + 'px' // 标记点图标高度
           }
         })
         this.setData({
           markers: tempMarkers
+        }, () => {
+          if (commonMarkId) {
+            this.ifDeveiceDetail()
+          }
         })
       },
       fail: (err) => {
         console.error(err)
       },
     })
+  },
+
+  // 获取列表后判断是否需要请求详情
+  ifDeveiceDetail() {
+    const selectedMarker = this.data.markers.find(marker => marker.id === commonMarkId) || {}
+    if (!selectedMarker.id) return
+    // 在这里可以根据 selectedMarker 执行需要的操作，比如显示信息窗口等
+    console.log("点击了标记点：" + selectedMarker.id);
+    const tempArr = JSON.parse(JSON.stringify(this.data.markers))
+    tempArr.forEach(item => {
+      item.iconPath = item.id === commonMarkId ? item.selectIconPath : mapIcon[item.deviceType]
+    })
+    this.getDeviceDetail(selectedMarker)
+    setTimeout(() => {
+      this.setData({
+        markers: tempArr
+      })
+    }, 200)
   },
 
   // 获取设备详情
@@ -438,9 +489,25 @@ Page({
             coordinate: `${latitude},${longitude}`
           },
           success: (res) => {
+            if (!res.data.data.pic_cover) {
+              res.data.data.pic_cover = false
+              
+            }
+            const tempArr = []
+            res.data.data?.pictures.forEach((item, i) => {
+              tempArr.push({
+                url: item.pic_url,
+                name: i,
+                deletable: false
+              })
+            })
+            res.data.data.showPictures = tempArr
             this.setData({
               deviceDetail: res.data.data,
-              markCheckedShow: true
+              markCheckedShow: true,
+              fileList: [],
+              picture: [],
+              deviceId: param.id
             })
             // 开始路线规划
             // this.line(`${latitude},${longitude}`, `${res.data.data.coordinate}`)
@@ -464,43 +531,42 @@ Page({
 
   onShow() {
     if (wx.getStorageSync('ticket')) {
-      const obj = this.data.chargeBtnArray.find(item => item.id === this.data.choiceTypeValue)
-      this.getDeviceList(obj.value)
-
+      // const obj = this.data.chargeBtnArray.find(item => item.id === this.data.choiceTypeValue)
       const options = JSON.parse(wx.getStorageSync('detailObj') || '{}')
+      this.mapCtx = wx.createMapContext('myMap')
       if (!options.id) return
-      const markerId = options.id // 获取点击的标记点的 id
-      const selectedMarker = this.data.markers.find(marker => marker.id === markerId) || {}
-      if (!selectedMarker.id) return
-      // 在这里可以根据 selectedMarker 执行需要的操作，比如显示信息窗口等
-      console.log("点击了标记点：" + selectedMarker.id);
-      const tempArr = JSON.parse(JSON.stringify(this.data.markers))
-      tempArr.forEach(item => {
-        item.iconPath = item.id === markerId ? item.selectIconPath : mapIcon[item.deviceType]
-      })
-      this.getDeviceDetail(selectedMarker)
-      setTimeout(() => {
-        this.setData({
-          markers: tempArr
-        })
-      }, 500)
-      this.mapCtx.moveToLocation({
+      commonMarkId= options.id // 获取点击的标记点的 id
+      console.log('options====', options)
+      detailLatiuteAndLongitude = {
         latitude: options.latitude * 1,
-        longitude: options.longitude * 1,
-        success: () => {
-          // 移动成功
-          wx.removeStorageSync('detailObj')
-        },
-        fail: function (error) {
-          // 移动失败，可以处理错误情况
-          console.error(error);
-        }
-      });
+        longitude: options.longitude * 1
+      }
+      this.setData({
+        mapScal: 20
+      }, () => {
+        // 移动
+        this.mapCtx.moveToLocation({
+          latitude: options.latitude * 1,
+          longitude: options.longitude * 1,
+          success: () => {
+            // 移动成功
+            console.log('移动成功')
+            wx.removeStorageSync('detailObj')
+          },
+          fail: function (error) {
+            // 移动失败，可以处理错误情况
+            console.error(error);
+          }
+        });
+      })
     }
   },
 
   // 回到当前位置
   goBackCurrentPosition() {
+    this.setData({
+      mapScal: 15
+    })
     const currentPosion = {
       latitude: this.data.latitude,
       longitude: this.data.longitude
@@ -558,6 +624,116 @@ Page({
     })
   },
 
+  // 上传的图片删除
+  imageDelete(e) {
+    console.log(e.detail.index)
+    const tempArr = this.data.fileList
+    tempArr.splice(e.detail.index, 1)
+    const tempPicture = tempArr.map(item => item.url)
+    this.setData({
+      fileList: tempArr,
+      picture: tempPicture
+    })
+  },
+
+  // 上传前校验
+  beforeRead(event) {
+    const { file, callback } = event.detail;
+    if (file[0].size > 5242880) {
+      Toast('文件大小不能超过 5M');
+      callback(false)
+    } else {
+      return callback(true)
+    }
+    // callback(file.type === 'image');
+  },
+
+  // 上传操作
+  afterRead(event) {
+    const { file } = event.detail;
+    file.forEach(item => {
+      const uploadTask = wx.uploadFile({
+        url: url + "/api/file/upload", // 服务端接收上传文件的路由
+        filePath: item.url,
+        name: 'file',
+        formData: {
+          ticket: wx.getStorageSync("ticket"), // 其他额外的表单数据
+        },
+        success: (res) => {
+          wx.showToast({
+            title: "上传成功",
+            icon: "success",
+          });
+          const responseData = JSON.parse(res.data)
+          const arr = this.data.fileList.concat([
+            {
+              url: responseData.data.url,
+              deletable: true,
+              name: "图片",
+            },
+          ])
+          const tempPicture = arr.map(item => item.url)
+          this.setData({
+            fileList: arr,
+            picture: tempPicture,
+            markCheckedShow: true
+          }, () => {
+            this.deviceUpload()
+          });
+        },
+        fail: (err) => {
+          wx.showToast({
+            title: "上传失败",
+            icon: "error",
+          });
+        },
+      });
+      uploadTask.onProgressUpdate((res) => {
+        this.setData({
+          showProcess: true,
+          processValue: res.progress
+        })
+        if (res.progress === 100) {
+          this.setData({
+            showProcess: false,
+            processValue: 0
+          })
+        }
+      })
+    })
+  },
+
+  // 设备图片上传
+  deviceUpload() {
+    wx.request({
+      url: url + '/api/user/correct',
+      method: 'POST',
+      data: {
+        ticket: wx.getStorageSync('ticket'),
+        picture: this.data.picture,
+        description: '没有图片',
+        error_type: '设备信息有误',
+        device_id: this.data.deviceId
+      },
+      success: (res) => {
+        if (!res.data.code) {
+          wx.showToast({
+            title: '等待审核',
+            icon: 'success',
+          })
+          setTimeout(() => {
+            wx.navigateBack({
+              delta: 1 // 返回上一级页面
+            })
+          }, 1000)
+        }
+      },
+      fail: (err) => {
+        console.error('纠错失败：', err)
+      }
+    })
+  },
+
   // 路线规划
   line(from, to) {
     QQMapWX.direction({
@@ -610,6 +786,14 @@ Page({
     console.log(app.globalData.address)
     this.onLoad()
     this.onShow()
+  },
+
+  onHide() {
+    this.setData({
+      mapScal: 15
+    })
+    this.closeMarkDetail()
   }
 })
+
 

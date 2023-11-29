@@ -76,6 +76,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    wx.hideShareMenu({
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
     QQMapWX.reverseGeocoder({
       location: {
         latitude: options?.latitude * 1,
@@ -118,26 +121,6 @@ Page({
 
   // 搜索请求
   searchRequest() {
-    // QQMapWX.search({
-    //   keyword: `${this.data.searchParam.value}`,
-    //   location: `${this.data.latitude},${this.data.longitude}`,
-    //   address_format: 'short',
-    //   // filter: 'category=大厦,店铺,小区,学校,公交站',
-    //   page_index: this.data.searchParam.page,
-    //   success: (res) => {
-    //     this.setData({
-    //       resultData: this.data.resultData.concat(res.data || []),
-    //       show: true,
-    //       searchParam: {
-    //         ...this.data.searchParam,
-    //         isLoadMore: res.data.length === 10
-    //       }
-    //     })
-    //   },
-    //   fail: (err) => {
-    //     console.error(err)
-    //   }
-    // })
     wx.request({
       url: 'https://apis.map.qq.com/ws/place/v1/suggestion',
       method: 'GET',
@@ -146,7 +129,10 @@ Page({
         keyword: `${this.data.searchParam.value}`,
         region: app.globalData.address,
         page_index:  this.data.searchParam.page,
+        region_fix: 1,
+        get_subpois: 1,
         page_size: 20,
+        policy: 1,
         location: `${this.data.latitude},${this.data.longitude}`
       },
       success: (res) => {
@@ -294,8 +280,11 @@ Page({
   // 获取用户所在位置附近的设备列表
   getDeviceList(type) {
     const currentPosition = JSON.parse(wx.getStorageSync('currentPosition') || '{}')
+    wx.showLoading({
+      title: '加载中...',
+    })
     wx.request({
-      url: url + '/api/device/nearbyList',
+      url: url + '/api/device/dataList',
       method: 'GET',
       data: {
         city: app.globalData.address,
@@ -316,6 +305,9 @@ Page({
       fail: (err) => {
         console.error(err)
       },
+      complete: () => {
+        wx.hideLoading()
+      }
     })
   },
 

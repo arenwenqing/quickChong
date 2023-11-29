@@ -6,13 +6,12 @@
       style="width: 100%; height: 100vh;"
       latitude="{{latitude}}"
       longitude="{{longitude}}"
-      show-location="{{true}}"
       markers="{{markers}}"
-      polyline="{{polyline}}" 
       joinCluster="{{true}}"
       bindmarkertap="markertap"
       bindregionchange="regionchange"
-      scale="13"
+      scale="{{mapScal}}"
+      max-scale="24"
       show-location
     >
     </map>
@@ -57,16 +56,31 @@
   <view class="{{ markCheckedShow ? 'checked-mark-wrapper' : 'checked-mark-wrapper hide'}}">
     <image src="/image/close.png" class="checked-mark-close" catchtap="closeMarkDetail" />
     <view class="mark-content-top">
-      <view class="content-img">
-        <image src="{{deviceDetail.pic_cover}}" class="content-img-style" catch:tap="showBig" data-url="{{deviceDetail.pic_cover}}" />
+      <view class="content-img content-uploader-image" wx:if="{{deviceDetail.pic_cover}}">
+        <!-- <image src="{{deviceDetail.pic_cover}}" class="content-img-style" catch:tap="showBig" data-url="{{deviceDetail.pic_cover}}" /> -->
+        <van-uploader file-list="{{ deviceDetail.showPictures }}" />
+      </view>
+      <view class="content-img" wx:else>
+        <van-uploader
+          file-list="{{ fileList }}"
+          bind:delete="imageDelete"
+          accept="image"
+          multiple="false"
+          max-size="{{5242880}}"
+          use-before-read
+          bind:before-read="beforeRead"
+          bind:after-read="afterRead"
+        >
+          <image src="/image/upload-icon.png" class="content-img-style2" />
+        </van-uploader>
       </view>
       <view>
         <text class="checked-content-title">{{deviceDetail.device_type}}</text>
         <view class="checked-tag-wrapper">
           <text class="tag-item" wx:if="{{deviceDetail.is_scancode}}">扫码充电</text>
           <text class="tag-item" wx:if="{{deviceDetail.is_rainshelter}}">有防雨措施</text>
-          <text class="tag-item" wx:if="{{deviceDetail.is_charger}}">无需自备充电器</text>
-          <text class="tag-item" wx:if="{{!deviceDetail.is_charger}}">需自备充电器</text>
+          <text class="tag-item" wx:if="{{!deviceDetail.is_charger}}">无需自备充电器</text>
+          <text class="tag-item" wx:if="{{deviceDetail.is_charger}}">需自备充电器</text>
         </view> 
         <view class="checked-content-detail">
           <text>{{deviceDetail.distance}}</text>
@@ -82,7 +96,7 @@
             readonly
           />
           <text class="checked-content-pinlun" catchtap="lookCommentDetail" data-id="{{deviceDetail.id}}">{{deviceDetail.comment_number}}条评论
-</text>
+          </text>
         </view>
       </view>
     </view>
@@ -108,4 +122,8 @@
   >
   </big-image>
   <get-nick show="{{showLogin}}" bind:loginSure="loginSureHandle"></get-nick>
+  <van-toast id="van-toast" />
+  <view class="process-wrapper" wx:if="{{showProcess}}">
+    <van-circle value="{{ processValue }}"  text="{{processValue}}%" />
+  </view>
 </view>

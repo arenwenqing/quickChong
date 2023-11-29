@@ -65,8 +65,8 @@
   height: 206rpx;
   background: #FFFFFF;
   box-shadow: 0rpx 1rpx 14rpx 0rpx rgba(0,0,0,0.1);
-  border-radius: 24rpx;
-  top: 170rpx;
+  border-radius: 0 0 24rpx 24rpx;
+  top: 150rpx;
   left: 0;
   z-index: 100;
   overflow: hidden;
@@ -169,9 +169,13 @@
 }
 .content-img image {
   display: inline-block;
-  height: 200rpx;
+  height: 182rpx;
   /* width: 200rpx;
   height: 200rpx; */
+}
+.content-uploader-image .van-uploader__wrapper{
+  height: 180rpx;
+  overflow: hidden;
 }
 .checked-content-title {
   font-size: 32rpx;
@@ -340,4 +344,8 @@
   font-size: 24rpx;
   color: rgba(0,0,0,0.6);
   margin-right: 10rpx;
+}
+.content-img-style2 {
+  width: 168rpx;
+  height: 168rpx !important;
 }
